@@ -13,6 +13,16 @@ const PORT = process.env.PORT;
 // requiring all routes
 const userApi = require("./Routes/users");
 app.use("/api", userApi);
+
+const courseApi = require("./Routes/courses");
+app.use("/api", courseApi);
+
+const batchApi = require("./Routes/batches");
+app.use("/api", batchApi);
+
+const projecthApi = require("./Routes/projects");
+app.use("/api", projecthApi);
+
 app.listen(PORT, () => {
   console.log(`Server is running at port ${PORT}`);
 });
