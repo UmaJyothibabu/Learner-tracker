@@ -1,5 +1,5 @@
 const express = require("express");
-const app = new express();
+const app = express();
 
 const morgan = require("morgan");
 require("dotenv").config();
@@ -10,18 +10,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const PORT = process.env.PORT;
 
-// requiring all routes
+// Requiring all routes
 const userApi = require("./Routes/users");
-app.use("/api", userApi);
-
 const courseApi = require("./Routes/courses");
-app.use("/api", courseApi);
-
 const batchApi = require("./Routes/batches");
-app.use("/api", batchApi);
+const projectApi = require("./Routes/projects");
+const studentApi = require("./Routes/students"); // New route for students
 
-const projecthApi = require("./Routes/projects");
-app.use("/api", projecthApi);
+app.use("/api", userApi);
+app.use("/api", courseApi);
+app.use("/api", batchApi);
+app.use("/api", projectApi);
+app.use("/api", studentApi); // Mounting the student route
 
 app.listen(PORT, () => {
   console.log(`Server is running at port ${PORT}`);
