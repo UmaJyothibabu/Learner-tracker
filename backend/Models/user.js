@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 const userSchema = mongoose.Schema({
-  user_name: {
+  name: {
+    type: String,
+    required: true,
+  },
+  username: {
     type: String,
     required: true,
   },
@@ -21,7 +25,10 @@ const userSchema = mongoose.Schema({
     required: true,
   },
   batch: {
-    type: String,
+    type: [String],
+  },
+  course: {
+    type: [String],
   },
 });
 
