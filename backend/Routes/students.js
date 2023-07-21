@@ -84,4 +84,33 @@ router.put('/students/:id', async (req, res) => {
   }
 });
 
+
+
+
+//get student
+router.get("/student", async (req, res) => {
+  try {
+    let studentlist = await Student.find();
+    res.json(studentlist);
+  } catch (error) {
+    res.json({ message: "Unable to load", err: error.message });
+  }
+});
+
+
+
+
+// Delete students
+
+router.delete("/student/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Student.findByIdAndDelete(id);
+    res.json({ message: "Student deleted successfully" });
+  } catch (error) {
+    res.json({ message: "unable to delete", err: error.message });
+  }
+});
+
+
 module.exports = router;
