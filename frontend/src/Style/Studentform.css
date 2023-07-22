@@ -1,0 +1,20 @@
+/* StudentForm.css */
+
+.studentForm {
+    margin: 8% auto;
+    width: 50vw;
+  
+  }
+  
+  .register {
+    padding: 10px;
+  }
+  
+  .Form {
+    width: 93%;
+    /* height: 93%; */
+  }
+  
+  /* Add any additional styling specific to the student form here */
+  /* ... */
+  

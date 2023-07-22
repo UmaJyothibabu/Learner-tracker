@@ -88,7 +88,7 @@ router.put('/students/:id', async (req, res) => {
 
 
 //get student
-router.get("/student", async (req, res) => {
+router.get("/students", async (req, res) => {
   try {
     let studentlist = await Student.find();
     res.json(studentlist);
@@ -102,7 +102,7 @@ router.get("/student", async (req, res) => {
 
 // Delete students
 
-router.delete("/student/:id", async (req, res) => {
+router.delete("/students/:id", async (req, res) => {
   try {
     const { id } = req.params;
     await Student.findByIdAndDelete(id);
