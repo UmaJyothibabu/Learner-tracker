@@ -4,13 +4,15 @@ import UserList from "./components/UserList";
 import StudentForm from "./components/StudentForm";
 import UserForm from "./components/UserForm";
 import Login from "./components/Login";
+import StudentTable from "./components/StudentTable";
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Login />} />
       <Route path="/userinfo" element={<UserList />} />
-      <Route
+      <Route path="/studentTable" element={<StudentTable/>}/>
+      <Route 
         path="/userform"
         element={
           <UserForm
