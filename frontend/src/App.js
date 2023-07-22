@@ -4,10 +4,12 @@ import { Route, Routes } from "react-router-dom";
 import UserList from "./components/UserList";
 import StudentForm from "./components/StudentForm";
 import UserForm from "./components/UserForm";
+import Login from "./components/Login";
 
 function App() {
   return (
     <Routes>
+      <Route path="/" element={<Login />} />
       <Route path="/userinfo" element={<UserList />} />
       <Route
         path="/userform"

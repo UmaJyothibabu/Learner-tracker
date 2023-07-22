@@ -142,63 +142,13 @@ const UserList = () => {
                     </TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody sx={{ backgroundColor: "#F1DABF" }}>
+                <TableBody>
                   {data
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, i) => {
-                      return (
-                        <TableRow hover role="checkbox" tabIndex={-1} key={i}>
-                          <TableCell
-                            sx={{
-                              fontSize: "1.05rem",
-                              fontWeight: "bold",
-                              color: "#47301F",
-                            }}
-                            align="center"
-                          >
-                            {row.name}
-                          </TableCell>
-                          <TableCell
-                            sx={{
-                              fontSize: "1.05rem",
-                              fontWeight: "bold",
-                              color: "#47301F",
-                            }}
-                            align="center"
-                          >
-                            {row.username}
-                          </TableCell>
-                          <TableCell
-                            sx={{
-                              fontSize: "1.05rem",
-                              fontWeight: "bold",
-                              color: "#47301F",
-                            }}
-                            align="center"
-                          >
-                            {row.email}
-                          </TableCell>
-                          <TableCell
-                            sx={{
-                              fontSize: "1.05rem",
-                              fontWeight: "bold",
-                              color: "#47301F",
-                            }}
-                            align="center"
-                          >
-                            {row.phone}
-                          </TableCell>
-                          <TableCell
-                            sx={{
-                              fontSize: "1.05rem",
-                              fontWeight: "bold",
-                              color: "#47301F",
-                            }}
-                            align="center"
-                          >
-                            {row.designation}
-                          </TableCell>
-                          {row.designation === "Training_head" ? (
+                      if (row.designation !== "Admin")
+                        return (
+                          <TableRow hover role="checkbox" tabIndex={-1} key={i}>
                             <TableCell
                               sx={{
                                 fontSize: "1.05rem",
@@ -207,14 +157,8 @@ const UserList = () => {
                               }}
                               align="center"
                             >
-                              {row.course.map((val, i) => (
-                                <>
-                                  {val}
-                                  <br />
-                                </>
-                              ))}
+                              {row.name}
                             </TableCell>
-                          ) : (
                             <TableCell
                               sx={{
                                 fontSize: "1.05rem",
@@ -223,58 +167,115 @@ const UserList = () => {
                               }}
                               align="center"
                             >
-                              {row.batch.map((val, i) => (
-                                <>
-                                  {val}
-                                  <br />
-                                </>
-                              ))}
+                              {row.username}
                             </TableCell>
-                          )}
+                            <TableCell
+                              sx={{
+                                fontSize: "1.05rem",
+                                fontWeight: "bold",
+                                color: "#47301F",
+                              }}
+                              align="center"
+                            >
+                              {row.email}
+                            </TableCell>
+                            <TableCell
+                              sx={{
+                                fontSize: "1.05rem",
+                                fontWeight: "bold",
+                                color: "#47301F",
+                              }}
+                              align="center"
+                            >
+                              {row.phone}
+                            </TableCell>
+                            <TableCell
+                              sx={{
+                                fontSize: "1.05rem",
+                                fontWeight: "bold",
+                                color: "#47301F",
+                              }}
+                              align="center"
+                            >
+                              {row.designation}
+                            </TableCell>
+                            {row.designation === "Training_head" ? (
+                              <TableCell
+                                sx={{
+                                  fontSize: "1.05rem",
+                                  fontWeight: "bold",
+                                  color: "#47301F",
+                                }}
+                                align="center"
+                              >
+                                {row.course.map((val, i) => (
+                                  <>
+                                    {val}
+                                    <br />
+                                  </>
+                                ))}
+                              </TableCell>
+                            ) : (
+                              <TableCell
+                                sx={{
+                                  fontSize: "1.05rem",
+                                  fontWeight: "bold",
+                                  color: "#47301F",
+                                }}
+                                align="center"
+                              >
+                                {row.batch.map((val, i) => (
+                                  <>
+                                    {val}
+                                    <br />
+                                  </>
+                                ))}
+                              </TableCell>
+                            )}
 
-                          <TableCell
-                            sx={{
-                              fontSize: "1.05rem",
-                              fontWeight: "bold",
-                              color: "#47301F",
-                            }}
-                            align="center"
-                          >
-                            <ThemeProvider theme={theme}>
-                              <Tooltip title="Update" arrow>
-                                <TransparentButton
-                                // onClick={() => {
-                                //   updateEmployee(row);
-                                // }}
-                                >
-                                  <UpdateIcon style={{ color: "#335A71" }} />{" "}
-                                  {/* Update */}
-                                </TransparentButton>
-                              </Tooltip>
-                            </ThemeProvider>
-                            &nbsp;
-                            <ThemeProvider theme={theme}>
-                              <Tooltip title="Delete" arrow>
-                                <TransparentButton
-                                // variant="contained"
+                            <TableCell
+                              sx={{
+                                fontSize: "1.05rem",
+                                fontWeight: "bold",
+                                color: "#47301F",
+                              }}
+                              align="center"
+                            >
+                              <ThemeProvider theme={theme}>
+                                <Tooltip title="Update" arrow>
+                                  <TransparentButton
+                                  // onClick={() => {
+                                  //   updateEmployee(row);
+                                  // }}
+                                  >
+                                    <UpdateIcon style={{ color: "#335A71" }} />{" "}
+                                    {/* Update */}
+                                  </TransparentButton>
+                                </Tooltip>
+                              </ThemeProvider>
+                              &nbsp;
+                              <ThemeProvider theme={theme}>
+                                <Tooltip title="Delete" arrow>
+                                  <TransparentButton
+                                  // variant="contained"
 
-                                // onClick={() => {
-                                //   deleteHandler(row._id);
-                                // }}
-                                >
-                                  <DeleteIcon
-                                    color="error"
-                                    onClick={() => {
-                                      deleteHandler(row._id);
-                                    }}
-                                  />
-                                  {/* Delete */}
-                                </TransparentButton>
-                              </Tooltip>
-                            </ThemeProvider>
-                          </TableCell>
-                        </TableRow>
-                      );
+                                  // onClick={() => {
+                                  //   deleteHandler(row._id);
+                                  // }}
+                                  >
+                                    <DeleteIcon
+                                      color="error"
+                                      onClick={() => {
+                                        deleteHandler(row._id);
+                                      }}
+                                    />
+                                    {/* Delete */}
+                                  </TransparentButton>
+                                </Tooltip>
+                              </ThemeProvider>
+                            </TableCell>
+                          </TableRow>
+                        );
                     })}
                 </TableBody>
               </Table>

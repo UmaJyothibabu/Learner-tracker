@@ -1,5 +1,5 @@
 const router = require("express").Router();
-
+const jwt = require("jsonwebtoken");
 const userData = require("../Models/user");
 
 // View Trainer and placement officer
@@ -59,4 +59,38 @@ router.delete("/user/:id", async (req, res) => {
   }
 });
 
+// login router
+
+router.post("/login", async (req, res) => {
+  const { username, password } = req.body;
+  let user = await userData.findOne({
+    username: username,
+  });
+  console.log(user);
+  if (!user) res.json({ message: "User not found" });
+  try {
+    if (user.password === password) {
+      jwt.sign(
+        { email: username, id: user._id, role: user.designation },
+        "ictklt",
+        { expiresIn: "1d" },
+        (err, token) => {
+          if (err) {
+            res.json({ message: "token not generated" });
+          } else {
+            res.json({
+              message: "Login Successfully",
+              token: token,
+              data: user,
+            });
+          }
+        }
+      );
+    } else {
+      res.json({ message: "Login failed" });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
 module.exports = router;

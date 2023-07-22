@@ -1,0 +1,24 @@
+.paperStyle {
+  padding: 30px 15px;
+}
+
+h4 {
+  color: #ffffff;
+  font-weight: 600;
+  padding: 3% 0;
+}
+.Form {
+  width: 90%;
+}
+.Header {
+  background-color: #5691b3;
+}
+.login {
+  align-items: center;
+
+  padding: 2%;
+}
+.createlink {
+  text-decoration: none;
+  color: #fc4a9d;
+}
