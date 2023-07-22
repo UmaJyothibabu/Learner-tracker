@@ -1,10 +1,9 @@
-
+import logo from "./logo.svg";
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import UserList from "./components/UserList";
+import StudentForm from "./components/StudentForm";
 import UserForm from "./components/UserForm";
-import StudentForm from "./components/StudentForm"; // Added the StudentForm component
-import MultipleSelectChip from "./components/Test";
 
 function App() {
   return (
@@ -49,7 +48,6 @@ function App() {
           />
         }
       />
-      <Route path="/test" element={<MultipleSelectChip />} />
     </Routes>
   );
 }
