@@ -21,6 +21,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
+import UserForm from "./UserForm";
 
 const UserList = () => {
   let [loading, setLoading] = useState(true);
@@ -82,7 +83,8 @@ const UserList = () => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-  return (
+
+  let finalJSX = (
     <Grid
       container
       justifyContent="center"
@@ -145,9 +147,9 @@ const UserList = () => {
                 <TableBody>
                   {data
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row, i) => {
-                      if (row.designation !== "Admin")
-                        return (
+                    .map(
+                      (row, i) =>
+                        row.designation !== "Admin" && (
                           <TableRow hover role="checkbox" tabIndex={-1} key={i}>
                             <TableCell
                               sx={{
@@ -244,9 +246,9 @@ const UserList = () => {
                               <ThemeProvider theme={theme}>
                                 <Tooltip title="Update" arrow>
                                   <TransparentButton
-                                  // onClick={() => {
-                                  //   updateEmployee(row);
-                                  // }}
+                                    onClick={() => {
+                                      updateUser(row);
+                                    }}
                                   >
                                     <UpdateIcon style={{ color: "#335A71" }} />{" "}
                                     {/* Update */}
@@ -275,8 +277,8 @@ const UserList = () => {
                               </ThemeProvider>
                             </TableCell>
                           </TableRow>
-                        );
-                    })}
+                        )
+                    )}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -295,6 +297,15 @@ const UserList = () => {
       </Grid>
     </Grid>
   );
+
+  // for displaying updation form
+  const updateUser = (val) => {
+    setUpdate(true);
+    setSingleValue(val);
+  };
+
+  if (update) finalJSX = <UserForm method="put" data={singleValue} />;
+  return finalJSX;
 };
 
 export default UserList;

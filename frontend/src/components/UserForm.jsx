@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Grid,
   MenuItem,
@@ -9,16 +10,25 @@ import {
 import React, { useEffect, useState } from "react";
 import "../Style/Userform.css";
 import axios from "axios";
+import { useFormik } from "formik";
+import { UserFormSchema } from "../Schema/UserFormSchema";
+import { useNavigate } from "react-router-dom";
 
 const UserForm = (props) => {
+  // Store details of courses and batches
   const [courses, setCourses] = useState([]);
   const [batches, setBatches] = useState([]);
+  const [isDisabled, setIsDisabled] = useState(false);
 
+  const navigate = useNavigate();
+  // if (props.method === "put") setIsDisabled(true);
+  const isUsernameDisabled = props.method === "put";
+  const isDesignationDisabled = props.method === "put";
   const endPoints = [
     "http://localhost:8000/api/course",
     "http://localhost:8000/api/batch",
   ];
-
+  // getting batch and course from the db collections using axios.all
   useEffect(() => {
     axios.all(endPoints.map((endpoint) => axios.get(endpoint))).then(
       axios.spread((course, batch) => {
@@ -26,48 +36,120 @@ const UserForm = (props) => {
         setCourses(course.data);
         setBatches(batch.data);
         console.log("batch", batch);
+        console.log(props.method);
       })
     );
   }, []);
-  const [user, setUser] = useState(props.data);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setUser({ ...user, [name]: value });
-  };
+  const {
+    values,
+    errors,
+    handleBlur,
+    touched,
+    handleSubmit,
+    handleChange,
+    resetForm,
+  } = useFormik({
+    initialValues: props.data,
+    validationSchema: UserFormSchema,
+    onSubmit: (values) => {
+      // console.log(values);
+      // ***********************************
+      // include userid and role with values once authorization is done
+      // this code is without authorization remember to update
+      // remember to use axios headers to pass token
+      // ***********************************
+      if (props.method === "post") {
+        axios
+          .post("http://localhost:8000/api/user", values)
+          .then((response) => {
+            if (response.data.message === "User added successfully") {
+              alert(response.data.message);
+              navigate("/userinfo");
+            } else if (response.data.message === "Unauthorised user") {
+              alert(response.data.message);
+              navigate("/");
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            alert("Unable to addd data");
+            navigate("/userform");
+          });
+      }
+      if (props.method === "put") {
+        console.log("insideput");
+        axios
+          .put(`http://localhost:8000/api/user/${values._id}`, values)
+          .then((response) => {
+            if (response.data.message === "User info updated Successfully") {
+              alert(response.data.message);
+              window.location.reload();
+            } else if (response.data.message === "Unauthorised user") {
+              alert(response.data.message);
+              navigate("/");
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            alert("unable to update");
+            window.location.reload();
+          });
+      }
+    },
+  });
 
+  // user registration or updation form
   return (
     <Grid justifyContent="center" className="userFrom">
       <Paper elevation={1}>
         <Grid align="center">
+          {/* Conditional rendering if method is post h4 willbe Register else Update */}
           <Typography variant="h4" gutterbottom className="register">
             {props.method === "post" ? "Register" : "Update User"}
           </Typography>
         </Grid>
         <Grid>
-          <form className="Form">
+          <form className="Form" onSubmit={handleSubmit}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={12} md={12} lg={6}>
                 <TextField
                   fullWidth
                   sx={{ m: 2 }}
                   label="Name"
-                  value={user.name}
+                  value={values.name}
                   name="name"
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   variant="outlined"
                 />
+                <Box pl={3}>
+                  {errors.name && touched.name ? (
+                    <Typography variant="body2" color="error" gutterBottom>
+                      {errors.name}
+                    </Typography>
+                  ) : null}
+                </Box>
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={6}>
                 <TextField
                   fullWidth
                   sx={{ m: 2 }}
                   label="Username"
-                  value={user.username}
+                  value={values.username}
                   name="username"
+                  disabled={isUsernameDisabled}
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   variant="outlined"
                 />
+                <Box pl={3}>
+                  {errors.username && touched.username ? (
+                    <Typography variant="body2" color="error" gutterBottom>
+                      {errors.username}
+                    </Typography>
+                  ) : null}
+                </Box>
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={6}>
                 <TextField
@@ -75,11 +157,19 @@ const UserForm = (props) => {
                   sx={{ m: 2 }}
                   label="Email"
                   type="email"
-                  value={user.email}
+                  value={values.email}
                   name="email"
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   variant="outlined"
                 />
+                <Box pl={3}>
+                  {errors.email && touched.email ? (
+                    <Typography variant="body2" color="error" gutterBottom>
+                      {errors.email}
+                    </Typography>
+                  ) : null}
+                </Box>
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={6}>
                 <TextField
@@ -87,11 +177,19 @@ const UserForm = (props) => {
                   sx={{ m: 2 }}
                   label="Phone Number"
                   type="tel"
-                  value={user.phone}
+                  value={values.phone}
                   name="phone"
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   variant="outlined"
                 />
+                <Box pl={3}>
+                  {errors.phone && touched.phone ? (
+                    <Typography variant="body2" color="error" gutterBottom>
+                      {errors.phone}
+                    </Typography>
+                  ) : null}
+                </Box>
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={6}>
                 <TextField
@@ -99,9 +197,11 @@ const UserForm = (props) => {
                   select
                   sx={{ m: 2 }}
                   label="Designation"
-                  value={user.designation}
+                  value={values.designation}
                   name="designation"
+                  disabled={isDesignationDisabled}
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   variant="outlined"
                 >
                   <MenuItem value="Training_head">Training Head</MenuItem>
@@ -109,8 +209,16 @@ const UserForm = (props) => {
                     Placement Officer
                   </MenuItem>
                 </TextField>
+                <Box pl={3}>
+                  {errors.designation && touched.designation ? (
+                    <Typography variant="body2" color="error" gutterBottom>
+                      {errors.designation}
+                    </Typography>
+                  ) : null}
+                </Box>
               </Grid>
-              {user.designation === "Training_head" ? (
+              {/* conditional rendering if designation is trainer the course drop down willbe shown else batch dropdown */}
+              {values.designation === "Training_head" ? (
                 <Grid item xs={12} sm={12} md={12} lg={6}>
                   <TextField
                     fullWidth
@@ -118,22 +226,28 @@ const UserForm = (props) => {
                     SelectProps={{ multiple: true }}
                     sx={{ m: 2 }}
                     label="Course"
-                    value={user.course}
+                    value={values.course}
                     name="course"
                     onChange={handleChange}
+                    onBlur={handleBlur}
                     variant="outlined"
                   >
                     {courses.map((course) => (
-                      <>
-                        <MenuItem
-                          key={course.course_name}
-                          value={course.course_name}
-                        >
-                          {course.course_name}
-                        </MenuItem>
-                      </>
+                      <MenuItem
+                        key={course.course_name}
+                        value={course.course_name}
+                      >
+                        {course.course_name}
+                      </MenuItem>
                     ))}
                   </TextField>
+                  <Box pl={3}>
+                    {errors.course && touched.course ? (
+                      <Typography variant="body2" color="error" gutterBottom>
+                        {errors.course}
+                      </Typography>
+                    ) : null}
+                  </Box>
                 </Grid>
               ) : (
                 <Grid item xs={12} sm={12} md={12} lg={6}>
@@ -143,22 +257,25 @@ const UserForm = (props) => {
                     SelectProps={{ multiple: true }}
                     sx={{ m: 2 }}
                     label="Batch"
-                    value={user.batch}
+                    value={values.batch}
                     name="batch"
                     onChange={handleChange}
+                    onBlur={handleBlur}
                     variant="outlined"
                   >
                     {batches.map((batch) => (
-                      <>
-                        <MenuItem
-                          key={batch.batch_name}
-                          value={batch.batch_name}
-                        >
-                          {batch.batch_name}
-                        </MenuItem>
-                      </>
+                      <MenuItem key={batch.batch_name} value={batch.batch_name}>
+                        {batch.batch_name}
+                      </MenuItem>
                     ))}
                   </TextField>
+                  <Box pl={3}>
+                    {errors.batch && touched.batch ? (
+                      <Typography variant="body2" color="error" gutterBottom>
+                        {errors.batch}
+                      </Typography>
+                    ) : null}
+                  </Box>
                 </Grid>
               )}
               <Grid item xs={12} sm={12} md={12} lg={6}>
@@ -166,23 +283,40 @@ const UserForm = (props) => {
                   fullWidth
                   sx={{ m: 2 }}
                   label="Password"
-                  value={user.password}
+                  value={values.password}
                   type="password"
                   name="password"
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   variant="outlined"
                 />
+                <Box pl={3}>
+                  {errors.password && touched.password ? (
+                    <Typography variant="body2" color="error" gutterBottom>
+                      {errors.password}
+                    </Typography>
+                  ) : null}
+                </Box>
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={6}>
                 <TextField
                   fullWidth
                   sx={{ m: 2 }}
                   label="Confirm Password"
-                  value={user.confirmpassword}
+                  type="password"
+                  value={values.confirmpassword}
                   name="confirmpassword"
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   variant="outlined"
                 />
+                <Box pl={3}>
+                  {errors.confirmpassword && touched.confirmpassword ? (
+                    <Typography variant="body2" color="error" gutterBottom>
+                      {errors.confirmpassword}
+                    </Typography>
+                  ) : null}
+                </Box>
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={6}>
                 {props.method === "post" ? (
@@ -192,7 +326,7 @@ const UserForm = (props) => {
                     fullWidth
                     variant="outlined"
                     color="secondary"
-                    // onClick={clearInput}
+                    onClick={resetForm}
                   >
                     Reset
                   </Button>
@@ -203,7 +337,9 @@ const UserForm = (props) => {
                     fullWidth
                     variant="outlined"
                     color="secondary"
-                    // onClick={showList}
+                    onClick={() => {
+                      window.location.reload();
+                    }}
                   >
                     Cancel
                   </Button>
@@ -216,7 +352,6 @@ const UserForm = (props) => {
                   fullWidth
                   variant="contained"
                   color="secondary"
-                  // onClick={addEmployee}
                 >
                   {props.method === "post" ? "Register" : "Update"}
                 </Button>
