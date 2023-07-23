@@ -18,11 +18,25 @@ import {
   DialogTitle,
   TextField,
   Grid,
+  createTheme,
+  Tooltip,
 } from "@mui/material";
 import React, { useState } from "react";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import AddCourseForm from "./AddCourseForm";
 import axios from "axios";
+import { ThemeProvider } from "@emotion/react";
+import DeleteIcon from "@mui/icons-material/Delete";
+
+// creating transparent button
+const theme = createTheme();
+const TransparentButton = styled(Button)(({ theme }) => ({
+  backgroundColor: "transparent",
+  color: theme.palette.primary.main,
+  border: "none",
+  outline: "none",
+  cursor: "pointer",
+}));
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -69,6 +83,35 @@ const CommonTable = (props) => {
     }
   };
 
+  const deleteHandler = (id) => {
+    let endPoint;
+    if (props.type === "Courses") {
+      endPoint = `http://localhost:8000/api/course/${id}`;
+    } else if (props.type === "Projects") {
+      endPoint = `http://localhost:8000/api/project/${id}`;
+    } else {
+      endPoint = `http://localhost:8000/api/batch/${id}`;
+    }
+    axios
+      .delete(endPoint)
+      .then((response) => {
+        if (
+          response.data.message === "Batch deleted successfully" ||
+          response.data.message === "Course deleted successfully" ||
+          response.data.message === "Project deleted successfully"
+        ) {
+          alert(response.data.message);
+          window.location.reload();
+        } else {
+          alert(response.data.message);
+          window.location.reload();
+        }
+      })
+      .catch((err) => {
+        alert(err.message);
+      });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     let endPoint, data;
@@ -110,8 +153,6 @@ const CommonTable = (props) => {
     <Paper
       sx={{
         overflow: "hidden",
-        marginLeft: "10px",
-        marginRight: "10px",
       }}
     >
       <Typography
@@ -137,6 +178,7 @@ const CommonTable = (props) => {
                   <StyledTableCell align="right">Starting Date</StyledTableCell>
                 </>
               )}
+              <StyledTableCell align="right">Remove</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -162,6 +204,27 @@ const CommonTable = (props) => {
                     </StyledTableCell>
                   </>
                 )}
+                <StyledTableCell align="right" sx={{ color: "#B7527E" }}>
+                  <ThemeProvider theme={theme}>
+                    <Tooltip title="Delete" arrow>
+                      <TransparentButton
+                      // variant="contained"
+
+                      // onClick={() => {
+                      //   deleteHandler(row._id);
+                      // }}
+                      >
+                        <DeleteIcon
+                          color="error"
+                          onClick={() => {
+                            deleteHandler(val.id);
+                          }}
+                        />
+                        {/* Delete */}
+                      </TransparentButton>
+                    </Tooltip>
+                  </ThemeProvider>
+                </StyledTableCell>
               </StyledTableRow>
             ))}
           </TableBody>
