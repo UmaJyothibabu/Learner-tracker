@@ -41,13 +41,19 @@ function App() {
               student_name: "",
               email_id: "",
               phone: "",
-              course: "",
-              batch: "",
+              course: [],
+              batch: [],
               project: "",
               course_status: "",
               placement_status: "",
               training_head: "",
               placement_officer: "",
+              student_address: {
+                address: "",
+                district: "",
+                state: "",
+                pin: "",
+              },
             }}
           />
         }

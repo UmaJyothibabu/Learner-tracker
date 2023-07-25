@@ -8,6 +8,7 @@ router.post('/students', async (req, res) => {
     const {
       student_name,
       email_id,
+      student_address, // Include address fields in the request body
       phone,
       course,
       batch,
@@ -21,6 +22,7 @@ router.post('/students', async (req, res) => {
     const student = new Student({
       student_name,
       email_id,
+      student_address, // Save address fields to the student schema
       phone,
       course,
       batch,
@@ -47,6 +49,7 @@ router.put('/students/:id', async (req, res) => {
     const {
       student_name,
       email_id,
+      student_address, // Include address fields in the request body
       phone,
       course,
       batch,
@@ -62,6 +65,7 @@ router.put('/students/:id', async (req, res) => {
       {
         student_name,
         email_id,
+        student_address, // Save address fields to the student schema
         phone,
         course,
         batch,
@@ -84,10 +88,7 @@ router.put('/students/:id', async (req, res) => {
   }
 });
 
-
-
-
-//get student
+// Get student list
 router.get("/students", async (req, res) => {
   try {
     let studentlist = await Student.find();
@@ -97,20 +98,15 @@ router.get("/students", async (req, res) => {
   }
 });
 
-
-
-
 // Delete students
-
 router.delete("/students/:id", async (req, res) => {
   try {
     const { id } = req.params;
     await Student.findByIdAndDelete(id);
     res.json({ message: "Student deleted successfully" });
   } catch (error) {
-    res.json({ message: "unable to delete", err: error.message });
+    res.json({ message: "Unable to delete", err: error.message });
   }
 });
-
 
 module.exports = router;
