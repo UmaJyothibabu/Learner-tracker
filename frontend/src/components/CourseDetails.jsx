@@ -11,6 +11,17 @@ const CourseDetails = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  const [userToken, setUserToken] = useState(
+    sessionStorage.getItem("userToken")
+  );
+  const [userRole, setUserRole] = useState(sessionStorage.getItem("role"));
+
+  const config = {
+    headers: {
+      authorization: "Bearer" + userToken,
+    },
+  };
+
   const endPoints = [
     "http://localhost:8000/api/course",
     "http://localhost:8000/api/batch",
@@ -20,22 +31,28 @@ const CourseDetails = () => {
   //  getting batch project and course from the db collections using axios.all
 
   useEffect(() => {
-    axios.all(endPoints.map((endpoint) => axios.get(endpoint))).then(
-      axios.spread((course, batch, project) => {
-        if (
-          course.data.message === "Unable to load" ||
-          project.data.message === "Unable to load" ||
-          batch.data.message === "Unable to load"
-        ) {
-          navigate("/userinfo");
-        } else {
-          setCourses(course.data);
-          setBatches(batch.data);
-          setProjects(project.data);
-          setLoading(false);
-        }
-      })
-    );
+    if (userRole !== "Admin") {
+      alert("Access denied");
+      console.log(userRole);
+      // navigate("/");
+    } else {
+      axios.all(endPoints.map((endpoint) => axios.get(endpoint, config))).then(
+        axios.spread((course, batch, project) => {
+          if (
+            course.data.message === "Unable to load" ||
+            project.data.message === "Unable to load" ||
+            batch.data.message === "Unable to load"
+          ) {
+            navigate("/userinfo");
+          } else {
+            setCourses(course.data);
+            setBatches(batch.data);
+            setProjects(project.data);
+            setLoading(false);
+          }
+        })
+      );
+    }
   }, []);
 
   return (
@@ -54,6 +71,9 @@ const CourseDetails = () => {
         >
           <Grid item xs={12} sm={12} md={12} lg={6}>
             <CommonTable
+              userRole={userRole}
+              userToken={userToken}
+              config={config}
               type="Batches"
               typeLabel="batch_name"
               data={batches.map(
@@ -68,6 +88,9 @@ const CourseDetails = () => {
           </Grid>
           <Grid item xs={12} sm={12} md={6} lg={2}>
             <CommonTable
+              userRole={userRole}
+              userToken={userToken}
+              config={config}
               type="Courses"
               typeLabel="course_name"
               data={courses.map(({ _id, course_name }) => ({
@@ -78,6 +101,9 @@ const CourseDetails = () => {
           </Grid>
           <Grid item xs={12} sm={12} md={6} lg={2}>
             <CommonTable
+              userRole={userRole}
+              userToken={userToken}
+              config={config}
               type="Projects"
               typeLabel="project_name"
               data={projects.map(({ _id, project_name }) => ({

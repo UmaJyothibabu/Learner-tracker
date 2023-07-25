@@ -1,9 +1,9 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const Student = require('../Models/student');
+const Student = require("../Models/student");
 
 // Add a new student
-router.post('/students', async (req, res) => {
+router.post("/students", async (req, res) => {
   try {
     const {
       student_name,
@@ -16,7 +16,7 @@ router.post('/students', async (req, res) => {
       course_status,
       placement_status,
       training_head,
-      placement_officer
+      placement_officer,
     } = req.body;
 
     const student = new Student({
@@ -30,19 +30,19 @@ router.post('/students', async (req, res) => {
       course_status,
       placement_status,
       training_head,
-      placement_officer
+      placement_officer,
     });
 
     await student.save();
 
-    res.status(201).json({ message: 'Student added successfully' });
+    res.status(201).json({ message: "Student added successfully" });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to add student' });
+    res.status(500).json({ error: "Failed to add student" });
   }
 });
 
 // Update student details
-router.put('/students/:id', async (req, res) => {
+router.put("/students/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -57,7 +57,7 @@ router.put('/students/:id', async (req, res) => {
       course_status,
       placement_status,
       training_head,
-      placement_officer
+      placement_officer,
     } = req.body;
 
     const updatedStudent = await Student.findByIdAndUpdate(
@@ -73,18 +73,18 @@ router.put('/students/:id', async (req, res) => {
         course_status,
         placement_status,
         training_head,
-        placement_officer
+        placement_officer,
       },
       { new: true }
     );
 
     if (!updatedStudent) {
-      res.status(404).json({ error: 'Student not found' });
+      res.status(404).json({ error: "Student not found" });
     } else {
-      res.status(200).json({ message: 'Student updated successfully' });
+      res.status(200).json({ message: "Student updated successfully" });
     }
   } catch (error) {
-    res.status(500).json({ error: 'Failed to update student' });
+    res.status(500).json({ error: "Failed to update student" });
   }
 });
 
@@ -95,6 +95,53 @@ router.get("/students", async (req, res) => {
     res.json(studentlist);
   } catch (error) {
     res.json({ message: "Unable to load", err: error.message });
+  }
+});
+
+// get students assigned to a training head or to  a placement officer
+router.get("/students/:faculty/:designation", async (req, res) => {
+  try {
+    const { faculty, designation } = req.params;
+    let studentList = [];
+    if (designation === "Training_head")
+      studentList = await Student.find({ training_head: faculty });
+    else if (designation === "Placement_officer")
+      studentList = await Student.find({ placement_officer: faculty });
+    if (studentList.length !== 0) {
+      res.json(studentList);
+    } else
+      res.json({ message: "This faculty is not assigned with any student" });
+  } catch (error) {
+    res.json({ message: "Unable to load", err: error_message });
+  }
+});
+
+// update the trainig_head/placement officer of students on deletion of the assigned faculty
+
+router.put("/students/:faculty/:designation", async (req, res) => {
+  try {
+    const { faculty, designation } = req.params;
+    console.log(req.body);
+    if (designation === "Training_head") {
+      const updatedList = await Student.updateMany(
+        { training_head: faculty },
+        { training_head: req.body.newFaculty }
+      );
+      if (updatedList.matchedCount === 0) {
+        res.json({ message: "No matching student found" });
+      } else res.json({ message: "Updated the student documnents" });
+    } else if (designation === "Placement_officer") {
+      const updatedList = await Student.updateMany(
+        { placement_officer: faculty },
+        { placement_officer: req.body.newFaculty }
+      );
+      if (updatedList.matchedCount === 0) {
+        res.json({ message: "No matching student found" });
+      } else res.json({ message: "Updated the student documnents" });
+    }
+  } catch (error) {
+    console.log(error.message);
+    res.json({ message: "Unable to update", err: error.message });
   }
 });
 

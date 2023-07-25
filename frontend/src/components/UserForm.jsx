@@ -21,6 +21,18 @@ const UserForm = (props) => {
   const [isDisabled, setIsDisabled] = useState(false);
 
   const navigate = useNavigate();
+
+  const [userToken, setUserToken] = useState(
+    sessionStorage.getItem("userToken")
+  );
+  const [userRole, setUserRole] = useState(sessionStorage.getItem("role"));
+
+  const config = {
+    headers: {
+      authorization: "Bearer" + userToken,
+    },
+  };
+
   // if (props.method === "put") setIsDisabled(true);
   const isUsernameDisabled = props.method === "put";
   const isDesignationDisabled = props.method === "put";
@@ -30,15 +42,20 @@ const UserForm = (props) => {
   ];
   // getting batch and course from the db collections using axios.all
   useEffect(() => {
-    axios.all(endPoints.map((endpoint) => axios.get(endpoint))).then(
-      axios.spread((course, batch) => {
-        console.log("course", course);
-        setCourses(course.data);
-        setBatches(batch.data);
-        console.log("batch", batch);
-        console.log(props.method);
-      })
-    );
+    if (userRole !== "Admin") {
+      alert("Access denied");
+      navigate("/");
+    } else {
+      axios.all(endPoints.map((endpoint) => axios.get(endpoint, config))).then(
+        axios.spread((course, batch) => {
+          console.log("course", course);
+          setCourses(course.data);
+          setBatches(batch.data);
+          console.log("batch", batch);
+          console.log(props.method);
+        })
+      );
+    }
   }, []);
 
   const {
@@ -61,7 +78,7 @@ const UserForm = (props) => {
       // ***********************************
       if (props.method === "post") {
         axios
-          .post("http://localhost:8000/api/user", values)
+          .post("http://localhost:8000/api/user", values, config)
           .then((response) => {
             if (response.data.message === "User added successfully") {
               alert(response.data.message);
@@ -80,7 +97,7 @@ const UserForm = (props) => {
       if (props.method === "put") {
         console.log("insideput");
         axios
-          .put(`http://localhost:8000/api/user/${values._id}`, values)
+          .put(`http://localhost:8000/api/user/${values._id}`, values, config)
           .then((response) => {
             if (response.data.message === "User info updated Successfully") {
               alert(response.data.message);

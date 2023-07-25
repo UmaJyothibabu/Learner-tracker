@@ -12,6 +12,19 @@ router.get("/user", async (req, res) => {
   }
 });
 
+// Getting list of trainers/placement officers
+router.get("/user/:designation", async (req, res) => {
+  try {
+    let { designation } = req.params;
+    let users = await userData.find({ designation: designation });
+    if (users.length !== 0) {
+      res.json(users);
+    }
+  } catch (error) {
+    res.json({ message: "Unable to load", err: error.message });
+  }
+});
+
 // view only one
 router.get("/user/:id", async (req, res) => {
   try {
@@ -43,6 +56,29 @@ router.put("/user/:id", async (req, res) => {
     await userData.findByIdAndUpdate(id, req.body);
     res.json({ message: "User info updated Successfully" });
   } catch (error) {
+    res.json({ message: "unable to update", err: error.message });
+  }
+});
+
+// Updating the course/batch array upon selecting as substitute
+router.put("/user/:username/:designation", async (req, res) => {
+  try {
+    let { username, designation } = req.params;
+    if (designation === "Training_head") {
+      await userData.updateOne(
+        { username: username },
+        { $addToSet: { course: req.body } }
+      );
+      res.json({ message: "User info updated Successfully" });
+    } else if (designation === "Placement_officer") {
+      await userData.updateOne(
+        { username: username },
+        { $addToSet: { batch: req.body } }
+      );
+      res.json({ message: "User info updated Successfully" });
+    }
+  } catch (error) {
+    console.log(error.message);
     res.json({ message: "unable to update", err: error.message });
   }
 });

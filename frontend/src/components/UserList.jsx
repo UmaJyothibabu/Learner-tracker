@@ -22,13 +22,23 @@ import { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 import UserForm from "./UserForm";
+import UserDeletion from "./UserDeletion";
 
 const UserList = () => {
   let [loading, setLoading] = useState(true);
   let [data, setData] = useState([]);
-  const [update, setUpdate] = useState(false);
+
+  const [update, setUpdate] = useState(false); //for checking wheather it is adding new or updating old one
   const navigate = useNavigate();
-  const [singleValue, setSingleValue] = useState([]);
+  const [singleValue, setSingleValue] = useState([]); //for updation form
+
+  const [showUserDeletion, setShowUserDeletion] = useState(false); //for deleting the user calling component userDeletion
+  const [rowValue, setRowValue] = useState(); //for deleting the user
+
+  const [userToken, setUserToken] = useState(
+    sessionStorage.getItem("userToken")
+  );
+  const [userRole, setUserRole] = useState(sessionStorage.getItem("role"));
 
   // creating transparent button
   const theme = createTheme();
@@ -40,37 +50,36 @@ const UserList = () => {
     cursor: "pointer",
   }));
 
+  //setting axios header
+  const config = {
+    headers: {
+      authorization: "Bearer" + userToken,
+    },
+  };
+
   // loading User info from db
   useEffect(() => {
-    axios
-      .get("http://localhost:8000/api/user")
-      .then((response) => {
-        setData(response.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        alert("Unable to load data");
-      });
+    if (userRole !== "Admin") {
+      alert("Access denied");
+      navigate("/");
+    } else {
+      axios
+        .get("http://localhost:8000/api/user", config)
+        .then((response) => {
+          setData(response.data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          alert("Unable to load data");
+        });
+    }
   }, []);
 
   // performing the deletion
-  const deleteHandler = (id) => {
-    axios
-      .delete(`http://localhost:8000/api/user/${id}`)
-      .then((response) => {
-        if (response.data.message === "User deleted successfully") {
-          alert(response.data.message);
-          console.log("deleted");
-
-          window.location.reload();
-        } else {
-          alert(response.data.message);
-        }
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
+  const deleteHandler = (i) => {
+    setShowUserDeletion(true);
+    setRowValue(i);
   };
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -268,10 +277,18 @@ const UserList = () => {
                                     <DeleteIcon
                                       color="error"
                                       onClick={() => {
-                                        deleteHandler(row._id);
+                                        // deleteHandler(row._id);
+                                        deleteHandler(i);
                                       }}
                                     />
                                     {/* Delete */}
+                                    {showUserDeletion && rowValue === i && (
+                                      <UserDeletion
+                                        user={row}
+                                        userToken={userToken}
+                                        userRole={userRole}
+                                      />
+                                    )}
                                   </TransparentButton>
                                 </Tooltip>
                               </ThemeProvider>

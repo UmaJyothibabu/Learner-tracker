@@ -21,12 +21,13 @@ import {
   createTheme,
   Tooltip,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import AddCourseForm from "./AddCourseForm";
 import axios from "axios";
 import { ThemeProvider } from "@emotion/react";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useNavigate } from "react-router-dom";
 
 // creating transparent button
 const theme = createTheme();
@@ -62,6 +63,7 @@ const CommonTable = (props) => {
   const [course, setCourse] = useState({});
   const [batch, setBatch] = useState({});
   const [project, setProject] = useState({});
+  const navigate = useNavigate();
 
   const [open, setOpen] = React.useState(false);
 
@@ -72,6 +74,13 @@ const CommonTable = (props) => {
   const handleClose = () => {
     setOpen(false);
   };
+
+  useEffect(() => {
+    if (props.userRole !== "Admin") {
+      alert("Access denied");
+      navigate("/");
+    }
+  });
 
   const handleChange = (e) => {
     if (props.type === "Courses") {
@@ -93,7 +102,7 @@ const CommonTable = (props) => {
       endPoint = `http://localhost:8000/api/batch/${id}`;
     }
     axios
-      .delete(endPoint)
+      .delete(endPoint, props.config)
       .then((response) => {
         if (
           response.data.message === "Batch deleted successfully" ||
@@ -130,7 +139,7 @@ const CommonTable = (props) => {
     }
     console.log("data", data);
     axios
-      .post(endPoint, data)
+      .post(endPoint, data, props.config)
       .then((response) => {
         if (
           response.data.message === "Course added successfully" ||

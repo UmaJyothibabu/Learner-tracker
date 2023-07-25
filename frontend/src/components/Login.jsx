@@ -34,6 +34,7 @@ const Login = () => {
               const role = response.data.data.designation;
               sessionStorage.setItem("userToken", token);
               sessionStorage.setItem("role", role);
+              sessionStorage.setItem("userId", userId);
               alert(response.data.message);
               if (role === "Admin") navigate("/userinfo");
               else {
@@ -106,7 +107,7 @@ const Login = () => {
                       className="Header"
                       variant="h4"
                       gutterBottom
-                      // sx={{ fontWeight: "bold" }}
+                      sx={{ fontWeight: "bold", color: "#ffffff" }}
                     >
                       Login
                     </Typography>
