@@ -30,7 +30,7 @@ const UserList = () => {
 
   const [update, setUpdate] = useState(false); //for checking wheather it is adding new or updating old one
   const navigate = useNavigate();
-  const [singleValue, setSingleValue] = useState([]); //for updation form
+  const [singleValue, setSingleValue] = useState({}); //for updation form
 
   const [showUserDeletion, setShowUserDeletion] = useState(false); //for deleting the user calling component userDeletion
   const [rowValue, setRowValue] = useState(); //for deleting the user
@@ -53,7 +53,7 @@ const UserList = () => {
   //setting axios header
   const config = {
     headers: {
-      authorization: "Bearer" + userToken,
+      authorization: " Bearer " + userToken,
     },
   };
 

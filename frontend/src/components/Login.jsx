@@ -32,9 +32,11 @@ const Login = () => {
               const token = response.data.token;
               const userId = response.data.data._id;
               const role = response.data.data.designation;
+              const username = response.data.data.username;
               sessionStorage.setItem("userToken", token);
               sessionStorage.setItem("role", role);
               sessionStorage.setItem("userId", userId);
+              sessionStorage.setItem("username", username);
               alert(response.data.message);
               if (role === "Admin") navigate("/userinfo");
               else {

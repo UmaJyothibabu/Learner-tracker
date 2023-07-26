@@ -34,7 +34,7 @@ const UserDeletion = ({ user, userToken, userRole }) => {
   //setting axios header
   const config = {
     headers: {
-      authorization: "Bearer" + userToken,
+      authorization: " Bearer " + userToken,
     },
   };
 

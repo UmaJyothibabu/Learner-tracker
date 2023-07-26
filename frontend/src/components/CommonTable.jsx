@@ -64,7 +64,7 @@ const CommonTable = (props) => {
   const [batch, setBatch] = useState({});
   const [project, setProject] = useState({});
   const navigate = useNavigate();
-
+  let date;
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -77,10 +77,20 @@ const CommonTable = (props) => {
 
   useEffect(() => {
     if (props.userRole !== "Admin") {
-      alert("Access denied");
+      // alert("Access denied");
       navigate("/");
     }
   });
+
+  function formatDate(inputDate) {
+    const [year, month, day] = inputDate.substring(0, 10).split("-");
+
+    // Pad the day and month with leading zeros if needed
+    const formattedDay = String(day).padStart(2, "0");
+    const formattedMonth = String(month).padStart(2, "0");
+
+    return `${formattedDay}-${formattedMonth}-${year}`;
+  }
 
   const handleChange = (e) => {
     if (props.type === "Courses") {
@@ -184,7 +194,7 @@ const CommonTable = (props) => {
               {props.type === "Batches" && (
                 <>
                   <StyledTableCell align="right">Starting Date</StyledTableCell>
-                  <StyledTableCell align="right">Starting Date</StyledTableCell>
+                  <StyledTableCell align="right">Ending Date</StyledTableCell>
                 </>
               )}
               <StyledTableCell align="right">Remove</StyledTableCell>
@@ -206,10 +216,10 @@ const CommonTable = (props) => {
                 {props.type === "Batches" && (
                   <>
                     <StyledTableCell align="right" sx={{ color: "#B7527E" }}>
-                      {val.start_date}
+                      {(date = formatDate(val.start_date))}
                     </StyledTableCell>
                     <StyledTableCell align="right" sx={{ color: "#B7527E" }}>
-                      {val.end_date}
+                      {(date = formatDate(val.end_date))}
                     </StyledTableCell>
                   </>
                 )}
@@ -240,6 +250,7 @@ const CommonTable = (props) => {
         </Table>
       </TableContainer>
       <br />
+      {/* adding new course/project/batch  dialogue box code */}
       <Box align="center">
         <Button
           variant="contained"

@@ -14,18 +14,36 @@ import {
 import StudentFormSchema from "../Schema/StudentFormSchema"; // Import the form validation schema
 
 const StudentForm = (props) => {
+  console.log(props.data);
   const [courses, setCourses] = useState([]);
   const [batches, setBatches] = useState([]);
   const [projects, setProjects] = useState([]);
 
   const navigate = useNavigate();
 
+  const [userToken, setUserToken] = useState(
+    sessionStorage.getItem("userToken")
+  );
+  const [userRole, setUserRole] = useState(sessionStorage.getItem("role"));
+  const [username, setUsername] = useState(sessionStorage.getItem("username"));
+  const config = {
+    headers: {
+      authorization: " Bearer " + userToken,
+    },
+  };
+
   useEffect(() => {
     const fetchCourseAndBatchData = async () => {
       try {
-        const courseResponse = await axios.get("http://localhost:8000/api/course");
-        const batchResponse = await axios.get("http://localhost:8000/api/batch");
-        const projectResponse = await axios.get("http://localhost:8000/api/project");
+        const courseResponse = await axios.get(
+          "http://localhost:8000/api/course"
+        );
+        const batchResponse = await axios.get(
+          "http://localhost:8000/api/batch"
+        );
+        const projectResponse = await axios.get(
+          "http://localhost:8000/api/project"
+        );
 
         setCourses(courseResponse.data);
         setBatches(batchResponse.data);
@@ -48,32 +66,73 @@ const StudentForm = (props) => {
   } = useFormik({
     initialValues: {
       ...props.data,
+
       student_address: props.data.student_address || {
         address: "",
         district: "",
         state: "",
         pin: "",
       },
-      course: props.data.course?._id || "",
-      batch: props.data.batch?._id || "",
-      project: props.data.project?._id || "",
     },
+    // course: props.data.course || "",
+    // batch: props.data.batch || "",
+    // project: props.data.project || "",
+    // },
     validationSchema: StudentFormSchema,
     onSubmit: async (values) => {
       try {
         // Replace the selected course, batch, and project IDs with their names
-        const selectedCourse = courses.find((course) => course._id === values.course);
-        const selectedBatch = batches.find((batch) => batch._id === values.batch);
-        const selectedProject = projects.find((project) => project._id === values.project);
+        // const selectedCourse = courses.find(
+        //   (course) => course._id === values.course
+        // );
+        // const selectedBatch = batches.find(
+        //   (batch) => batch._id === values.batch
+        // );
+        // const selectedProject = projects.find(
+        //   (project) => project._id === values.project
+        // );
 
-        values.course = selectedCourse ? selectedCourse.course_name : "";
-        values.batch = selectedBatch ? selectedBatch.batch_name : "";
-        values.project = selectedProject ? selectedProject.project_name : "";
-
-        const response = await axios.post("http://localhost:8000/api/students", values);
-        console.log("Form submission successful!", response.data);
-        navigate("/students");
+        // values.course = selectedCourse ? selectedCourse.course_name : "";
+        // values.batch = selectedBatch ? selectedBatch.batch_name : "";
+        // values.project = selectedProject ? selectedProject.project_name : "";
+        if (props.method === "post") {
+          const response = await axios.post(
+            "http://localhost:8000/api/students",
+            values,
+            config
+          );
+          console.log("Form submission successful!", response.data);
+          if (response.data.message === "Student added successfully") {
+            alert(response.data.message);
+            navigate("/studentTable");
+          } else if (response.data.message === "Unauthorised user") {
+            alert(response.data.message);
+            navigate("/");
+          }
+        }
+        if (props.method === "put") {
+          axios
+            .put(
+              `http://localhost:8000/api/students/${values._id}`,
+              values,
+              config
+            )
+            .then((response) => {
+              if (response.data.message === "Student updated successfully") {
+                alert(response.data.message);
+                window.location.reload();
+              } else if (response.data.message === "Unauthorised user") {
+                alert(response.data.message);
+                navigate("/");
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+              alert("Unable to update");
+            });
+        }
       } catch (error) {
+        alert("Unable to load");
         console.log("Error submitting form:", error);
       }
     },
@@ -145,7 +204,7 @@ const StudentForm = (props) => {
                   helperText={errors.course}
                 >
                   {courses.map((course) => (
-                    <MenuItem key={course._id} value={course._id}>
+                    <MenuItem key={course._id} value={course.course_name}>
                       {course.course_name}
                     </MenuItem>
                   ))}
@@ -165,7 +224,7 @@ const StudentForm = (props) => {
                   helperText={errors.batch}
                 >
                   {batches.map((batch) => (
-                    <MenuItem key={batch._id} value={batch._id}>
+                    <MenuItem key={batch._id} value={batch.batch_name}>
                       {batch.batch_name}
                     </MenuItem>
                   ))}
@@ -185,7 +244,7 @@ const StudentForm = (props) => {
                   helperText={errors.project}
                 >
                   {projects.map((project) => (
-                    <MenuItem key={project._id} value={project._id}>
+                    <MenuItem key={project._id} value={project.project_name}>
                       {project.project_name}
                     </MenuItem>
                   ))}
@@ -252,58 +311,58 @@ const StudentForm = (props) => {
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={6} lg={6}>
-  <TextField
-    fullWidth
-    sx={{ m: 2 }}
-    label="Address"
-    value={values.student_address.address}
-    name="student_address.address"
-    variant="outlined"
-    onChange={handleChange}
-    error={Boolean(errors.student_address?.address)}
-    helperText={errors.student_address?.address}
-  />
-</Grid>
-<Grid item xs={12} sm={12} md={6} lg={6}>
-  <TextField
-    fullWidth
-    sx={{ m: 2 }}
-    label="District"
-    value={values.student_address.district}
-    name="student_address.district"
-    variant="outlined"
-    onChange={handleChange}
-    error={Boolean(errors.student_address?.district)}
-    helperText={errors.student_address?.district}
-  />
-</Grid>
-<Grid item xs={12} sm={12} md={6} lg={6}>
-  <TextField
-    fullWidth
-    sx={{ m: 2 }}
-    label="State"
-    value={values.student_address.state}
-    name="student_address.state"
-    variant="outlined"
-    onChange={handleChange}
-    error={Boolean(errors.student_address?.state)}
-    helperText={errors.student_address?.state}
-  />
-</Grid>
-<Grid item xs={12} sm={12} md={6} lg={6}>
-  <TextField
-    fullWidth
-    sx={{ m: 2 }}
-    label="Pin"
-    type="number"
-    value={values.student_address.pin}
-    name="student_address.pin"
-    variant="outlined"
-    onChange={handleChange}
-    error={Boolean(errors.student_address?.pin)}
-    helperText={errors.student_address?.pin}
-  />
-</Grid>
+                <TextField
+                  fullWidth
+                  sx={{ m: 2 }}
+                  label="Address"
+                  value={values.student_address.address}
+                  name="student_address.address"
+                  variant="outlined"
+                  onChange={handleChange}
+                  error={Boolean(errors.student_address?.address)}
+                  helperText={errors.student_address?.address}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={6} lg={6}>
+                <TextField
+                  fullWidth
+                  sx={{ m: 2 }}
+                  label="District"
+                  value={values.student_address.district}
+                  name="student_address.district"
+                  variant="outlined"
+                  onChange={handleChange}
+                  error={Boolean(errors.student_address?.district)}
+                  helperText={errors.student_address?.district}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={6} lg={6}>
+                <TextField
+                  fullWidth
+                  sx={{ m: 2 }}
+                  label="State"
+                  value={values.student_address.state}
+                  name="student_address.state"
+                  variant="outlined"
+                  onChange={handleChange}
+                  error={Boolean(errors.student_address?.state)}
+                  helperText={errors.student_address?.state}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={6} lg={6}>
+                <TextField
+                  fullWidth
+                  sx={{ m: 2 }}
+                  label="Pin"
+                  type="number"
+                  value={values.student_address.pin}
+                  name="student_address.pin"
+                  variant="outlined"
+                  onChange={handleChange}
+                  error={Boolean(errors.student_address?.pin)}
+                  helperText={errors.student_address?.pin}
+                />
+              </Grid>
 
               {/* Buttons */}
               <Grid item xs={12} sm={12} md={12} lg={12}>

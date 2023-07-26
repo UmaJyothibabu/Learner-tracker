@@ -18,7 +18,7 @@ const CourseDetails = () => {
 
   const config = {
     headers: {
-      authorization: "Bearer" + userToken,
+      authorization: " Bearer " + userToken,
     },
   };
 

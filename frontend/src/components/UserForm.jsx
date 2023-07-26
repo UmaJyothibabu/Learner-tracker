@@ -26,10 +26,10 @@ const UserForm = (props) => {
     sessionStorage.getItem("userToken")
   );
   const [userRole, setUserRole] = useState(sessionStorage.getItem("role"));
-
+  // const [username, setUsername] = useState(sessionStorage.getItem("username"));
   const config = {
     headers: {
-      authorization: "Bearer" + userToken,
+      authorization: " Bearer " + userToken,
     },
   };
 

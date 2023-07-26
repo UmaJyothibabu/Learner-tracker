@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
 import {
   Paper,
@@ -15,74 +15,92 @@ import {
   Menu,
   MenuItem,
   IconButton,
+  Grid,
+  CircularProgress,
+  createTheme,
+  ThemeProvider,
+  Tooltip,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import styled from "@emotion/styled";
+import DeleteIcon from "@mui/icons-material/Delete";
+import UpdateIcon from "@mui/icons-material/Update";
+import StudentForm from "./StudentForm";
 
-const columns = [
-  {
-    id: "student_name",
-    label: "Name",
-    minWidth: 150,
-  },
-  {
-    id: "email_id",
-    label: "Email",
-    minWidth: 200,
-  },
-  {
-    id: "course",
-    label: "Course",
-    minWidth: 150,
-  },
-  {
-    id: "project",
-    label: "Project",
-    minWidth: 150,
-  },
-  {
-    id: "batch",
-    label: "Batch",
-    minWidth: 100,
-  },
-  {
-    id: "course_status",
-    label: "Course-Status",
-    minWidth: 150,
-  },
-  {
-    id: "action",
-    label: "Update and delete",
-    minWidth: 150,
-  },
-  {
-    id: "placement_status",
-    label: "Placement-Status",
-    minWidth: 150,
-  },
-  {
-    id: "selectStatus",
-    label: "Select Status",
-    minWidth: 150,
-  },
-];
-
+const theme = createTheme();
+const TransparentButton = styled(Button)(({ theme }) => ({
+  backgroundColor: "transparent",
+  color: theme.palette.primary.main,
+  border: "none",
+  outline: "none",
+  cursor: "pointer",
+}));
 
 const StudentTable = () => {
   const [data, setData] = useState([]);
+  const navigate = useNavigate();
+  const [update, setUpdate] = useState(false);
+  const [singleValue, setSingleValue] = useState({});
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [placementStatusMenuAnchor, setPlacementStatusMenuAnchor] = useState(null);
+
+  const [placementStatusMenuAnchor, setPlacementStatusMenuAnchor] =
+    useState(null);
   const [selectedPlacementStatus, setSelectedPlacementStatus] = useState(null);
 
+  let [loading, setLoading] = useState(true);
+
+  const [userToken, setUserToken] = useState(
+    sessionStorage.getItem("userToken")
+  );
+  const [userRole, setUserRole] = useState(sessionStorage.getItem("role"));
+  const [username, setusername] = useState(sessionStorage.getItem("username"));
+
+  const config = {
+    headers: {
+      authorization: " Bearer " + userToken,
+    },
+  };
+
   useEffect(() => {
-    axios
-      .get("http://localhost:8000/api/students")
-      .then((response) => {
-        setData(response.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    if (
+      userRole === "Admin" ||
+      userRole === "Training_head" ||
+      userRole === "Placement_officer"
+    ) {
+      // if admin is logged in full student in collection is fetched
+      if (userRole === "Admin") {
+        axios
+          .get("http://localhost:8000/api/students", config)
+          .then((response) => {
+            setData(response.data);
+            console.log(response.data);
+            setLoading(false);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else {
+        // if trainer or placement officer is logged in only students assigned to them are fetched
+        axios
+          .get(
+            `http://localhost:8000/api/students/${username}/${userRole}`,
+            config
+          )
+          .then((response) => {
+            setData(response.data);
+            console.log(response.data);
+            setLoading(false);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    } else {
+      alert("Access denied");
+      navigate("/");
+    }
   }, []);
 
   const handleChangePage = (event, newPage) => {
@@ -92,17 +110,6 @@ const StudentTable = () => {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
-  };
-
-  const handleDelete = (id) => {
-    axios
-      .delete(`http://localhost:8000/api/students/${id}`)
-      .then(() => {
-        setData((prevData) => prevData.filter((item) => item._id !== id));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
   };
 
   const handlePlacementStatusMenuOpen = (event, rowData) => {
@@ -122,7 +129,9 @@ const StudentTable = () => {
       .then(() => {
         setData((prevData) =>
           prevData.map((item) =>
-            item._id === selectedPlacementStatus ? { ...item, placement_status: status } : item
+            item._id === selectedPlacementStatus
+              ? { ...item, placement_status: status }
+              : item
           )
         );
       })
@@ -133,120 +142,309 @@ const StudentTable = () => {
     handlePlacementStatusMenuClose();
   };
 
+  // Deleting student
+  const deleteHandler = (id) => {
+    axios
+      .delete(`http://localhost:8000/api/students/${id}`, config)
+      .then((response) => {
+        if (response.data.message === "Student deleted successfully") {
+          alert(response.data.message);
+          window.location.reload();
+        } else if (response.data.message === "Unauthorised user") {
+          alert(response.data.message);
+          navigate("/");
+        } else {
+          alert(response.data.message);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("Unable to delete");
+      });
+  };
 
-  return (
-    <div style={{ paddingTop: "100px" }}>
-      <Paper sx={{ width: "100%", overflow: "hidden" }}>
-        <h2 className="App fw-bold py-4 fst-italic">Student List</h2>
-        <TableContainer sx={{ maxHeight: 440 }}>
-          <Table stickyHeader aria-label="sticky table">
-            <TableHead>
-              <TableRow
-                sx={{
-                  "& th": {
-                    color: "white",
-                    backgroundColor: "#47301F",
-                    fontSize: "1.25rem",
-                    fontWeight: "bold",
-                  },
-                }}
-              >
-                {columns.map((column) => (
-                  <TableCell
-                    key={column.id}
-                    align={column.align}
-                    style={{ minWidth: column.minWidth, backgroundColor: "gray", color: "white" }}
+  let finalJsx = (
+    <Grid
+      container
+      justifyContent="center"
+      alignItems="center"
+      style={{ height: "100vh" }}
+    >
+      <Grid item xs={1} sm={1} md={1} lg={1}></Grid>
+      <Grid item xs={11} sm={11} md={11} lg={11}>
+        {loading ? (
+          <div style={{ margin: "10% 45%" }}>
+            <CircularProgress />
+            <h1>Loading</h1>
+          </div>
+        ) : (
+          <Paper sx={{ width: "100%" }}>
+            <h2 className="App fw-bold py-4 fst-italic">Student List</h2>
+            <TableContainer sx={{ maxHeight: 500 }}>
+              <Table stickyHeader aria-label="sticky table">
+                <TableHead>
+                  <TableRow
+                    sx={{
+                      "& th": {
+                        color: "white",
+                        backgroundColor: "#47301F",
+                        fontSize: "1.25rem",
+                        fontWeight: "bold",
+                      },
+                    }}
                   >
-                    {column.label}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody sx={{ backgroundColor: "white" }}>
-              {data
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, i) => {
-                  return (
-                    <TableRow hover role="checkbox" tabIndex={-1} key={i}>
-                      {columns.map((column) => {
-                        const value = row[column.id];
-
-                        if (column.id === "action") {
-                          return (
-                            <TableCell key={column.id} align={column.align}>
-                              <Link to={`/update-student/${row._id}`}>
-                                <Button variant="contained" color="secondary" style={{ backgroundColor: "gray" }}>
-                                  Update
-                                </Button>
-                              </Link>
-                              <Button
-                                variant="contained"
-                                color="secondary"
-                                style={{ backgroundColor: "gray" }}
-                                onClick={() => handleDelete(row._id)}
-                              >
-                                Delete
-                              </Button>
-                            </TableCell>
-                          );
-                        }
-
-                        if (column.id === "placement_status") {
-                          return (
-                            <TableCell key={column.id} align={column.align}>
-                              {value}
-                            </TableCell>
-                          );
-                        }
-
-                        if (column.id === "selectStatus") {
-                          return (
-                            <TableCell key={column.id} align={column.align}>
-                              <IconButton
-                                color="secondary"
-                                style={{ backgroundColor: "#CCCCCC" }}
-                                onClick={(event) => handlePlacementStatusMenuOpen(event, row)}
-                              >
-                                <MoreVertIcon />
-                              </IconButton>
-                              <Menu
-                                anchorEl={placementStatusMenuAnchor}
-                                open={Boolean(placementStatusMenuAnchor && selectedPlacementStatus)}
-                                onClose={handlePlacementStatusMenuClose}
-                              >
-                                <MenuItem onClick={() => handlePlacementStatusSelect("Placed")}>Placed</MenuItem>
-                                <MenuItem onClick={() => handlePlacementStatusSelect("Not interested")}>Not Interested</MenuItem>
-                                <MenuItem onClick={() => handlePlacementStatusSelect("Jobseeking")}>Job Seeking</MenuItem>
-                              </Menu>
-                            </TableCell>
-                          );
-                        }
-
-                        return (
-                          <TableCell key={column.id} align={column.align}>
-                            {column.format && typeof value === "number" ? column.format(value) : value}
+                    <TableCell align="center" style={{ minWidth: 140 }}>
+                      Name
+                    </TableCell>
+                    <TableCell align="center" style={{ minWidth: 80 }}>
+                      Course
+                    </TableCell>
+                    <TableCell align="center" style={{ minWidth: 80 }}>
+                      Batch
+                    </TableCell>
+                    <TableCell align="center" style={{ minWidth: 80 }}>
+                      Project
+                    </TableCell>
+                    <TableCell align="center" style={{ minWidth: 120 }}>
+                      Course status
+                    </TableCell>
+                    {userRole === "Admin" && (
+                      <>
+                        <TableCell align="center" style={{ minWidth: 130 }}>
+                          Training Head
+                        </TableCell>
+                        <TableCell align="center" style={{ minWidth: 130 }}>
+                          Placement officer
+                        </TableCell>
+                      </>
+                    )}
+                    <TableCell align="center" style={{ minWidth: 110 }}>
+                      Placement Status
+                    </TableCell>
+                    {(userRole === "Placement_office" ||
+                      userRole === "Admin") && (
+                      <TableCell align="center" style={{ minWidth: 50 }}>
+                        Update Status
+                      </TableCell>
+                    )}
+                    {(userRole === "Admin" || userRole === "Training_head") && (
+                      <TableCell align="center" style={{ minWidth: 110 }}>
+                        Update/Delete
+                      </TableCell>
+                    )}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {data
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row, i) => (
+                      <TableRow hover role="checkbox" tabIndex={-1} key={i}>
+                        <TableCell
+                          sx={{
+                            fontSize: "1.05rem",
+                            fontWeight: "bold",
+                            color: "#47301F",
+                          }}
+                          align="center"
+                        >
+                          {row.student_name}
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            fontSize: "1.05rem",
+                            fontWeight: "bold",
+                            color: "#47301F",
+                          }}
+                          align="center"
+                        >
+                          {row.course}
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            fontSize: "1.05rem",
+                            fontWeight: "bold",
+                            color: "#47301F",
+                          }}
+                          align="center"
+                        >
+                          {row.batch}
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            fontSize: "1.05rem",
+                            fontWeight: "bold",
+                            color: "#47301F",
+                          }}
+                          align="center"
+                        >
+                          {row.project}
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            fontSize: "1.05rem",
+                            fontWeight: "bold",
+                            color: "#47301F",
+                          }}
+                          align="center"
+                        >
+                          {row.course_status}
+                        </TableCell>
+                        {userRole === "Admin" && (
+                          <TableCell
+                            sx={{
+                              fontSize: "1.05rem",
+                              fontWeight: "bold",
+                              color: "#47301F",
+                            }}
+                            align="center"
+                          >
+                            {row.training_head}
                           </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  );
-                })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          sx={{ backgroundColor: "#F2F2F2" }}
-          rowsPerPageOptions={[10, 25, 100]}
-          component="div"
-          count={data.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
-    </div>
+                        )}
+                        {(userRole === "Admin" ||
+                          userRole === "Traininh_head") && (
+                          <TableCell
+                            sx={{
+                              fontSize: "1.05rem",
+                              fontWeight: "bold",
+                              color: "#47301F",
+                            }}
+                            align="center"
+                          >
+                            {row.placement_officer}
+                          </TableCell>
+                        )}
+                        <TableCell
+                          sx={{
+                            fontSize: "1.05rem",
+                            fontWeight: "bold",
+                            color: "#47301F",
+                          }}
+                          align="center"
+                        >
+                          {row.placement_status}
+                        </TableCell>
+                        {(userRole === "Admin" ||
+                          userRole === "Placement_officer") && (
+                          <TableCell
+                            sx={{
+                              fontSize: "1.05rem",
+                              fontWeight: "bold",
+                              color: "#47301F",
+                            }}
+                            align="center"
+                          >
+                            <IconButton
+                              color="secondary"
+                              style={{ backgroundColor: "#CCCCCC" }}
+                              onClick={(event) =>
+                                handlePlacementStatusMenuOpen(event, row)
+                              }
+                            >
+                              <MoreVertIcon />
+                            </IconButton>
+                            <Menu
+                              anchorEl={placementStatusMenuAnchor}
+                              open={Boolean(
+                                placementStatusMenuAnchor &&
+                                  selectedPlacementStatus
+                              )}
+                              onClose={handlePlacementStatusMenuClose}
+                            >
+                              <MenuItem
+                                onClick={() =>
+                                  handlePlacementStatusSelect("Placed")
+                                }
+                              >
+                                Placed
+                              </MenuItem>
+                              <MenuItem
+                                onClick={() =>
+                                  handlePlacementStatusSelect("Not interested")
+                                }
+                              >
+                                Not Interested
+                              </MenuItem>
+                              <MenuItem
+                                onClick={() =>
+                                  handlePlacementStatusSelect("Jobseeking")
+                                }
+                              >
+                                Job Seeking
+                              </MenuItem>
+                            </Menu>
+                          </TableCell>
+                        )}
+                        {(userRole === "Admin" ||
+                          userRole === "Training_head") && (
+                          <TableCell
+                            sx={{
+                              fontSize: "1.05rem",
+                              fontWeight: "bold",
+                              color: "#47301F",
+                            }}
+                            align="center"
+                          >
+                            <ThemeProvider theme={theme}>
+                              <Tooltip title="Update" arrow>
+                                <TransparentButton
+                                  onClick={() => {
+                                    updateStudent(row);
+                                  }}
+                                >
+                                  <UpdateIcon style={{ color: "#335A71" }} />{" "}
+                                </TransparentButton>
+                              </Tooltip>
+                            </ThemeProvider>
+                            &nbsp;
+                            <ThemeProvider theme={theme}>
+                              <Tooltip title="Delete" arrow>
+                                <TransparentButton
+                                  // variant="contained"
+                                  onClick={() => {
+                                    deleteHandler(row._id);
+                                  }}
+                                >
+                                  <DeleteIcon
+                                    color="error"
+                                    // onClick={() => {
+                                    //   // deleteHandler(row._id);
+                                    //   deleteHandler(i);
+                                    // }}
+                                  />
+                                </TransparentButton>
+                              </Tooltip>
+                            </ThemeProvider>
+                          </TableCell>
+                        )}
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TablePagination
+              sx={{ backgroundColor: "#F2F2F2" }}
+              rowsPerPageOptions={[10, 25, 100]}
+              component="div"
+              count={data.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </Paper>
+        )}
+      </Grid>
+    </Grid>
   );
-};
 
+  const updateStudent = (val) => {
+    setUpdate(true);
+    setSingleValue(val);
+  };
+
+  if (update) finalJsx = <StudentForm method="put" data={singleValue} />;
+
+  return finalJsx;
+};
 export default StudentTable;

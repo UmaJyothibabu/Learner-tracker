@@ -99,6 +99,8 @@ router.get("/students", async (req, res) => {
 });
 
 // get students assigned to a training head or to  a placement officer
+// facuty is the name/username of the trainer/placement officer
+// designation=Training_head/Placement_officer
 router.get("/students/:faculty/:designation", async (req, res) => {
   try {
     const { faculty, designation } = req.params;
