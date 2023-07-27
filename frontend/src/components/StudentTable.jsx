@@ -276,7 +276,7 @@ const StudentTable = () => {
                           <TableCell align="center" style={{ minWidth: 110 }}>
                             Placement Status
                           </TableCell>
-                          {(userRole === "Placement_office" ||
+                          {(userRole === "Placement_officer" ||
                             userRole === "Admin") && (
                             <TableCell align="center" style={{ minWidth: 50 }}>
                               Update Status
@@ -365,8 +365,7 @@ const StudentTable = () => {
                                   {row.training_head}
                                 </TableCell>
                               )}
-                              {(userRole === "Admin" ||
-                                userRole === "Training_head") && (
+                              {userRole === "Admin" && (
                                 <TableCell
                                   sx={{
                                     fontSize: "1.05rem",
