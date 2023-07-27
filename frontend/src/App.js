@@ -6,6 +6,8 @@ import UserForm from "./components/UserForm";
 import Login from "./components/Login";
 import CourseDetails from "./components/CourseDetails";
 import StudentTable from "./components/StudentTable";
+import BulkUpload from "./components/BulkUpload"; // Import the BulkUpload component
+
 function App() {
   return (
     <Routes>
@@ -58,6 +60,7 @@ function App() {
           />
         }
       />
+      <Route path="/bulkupload" element={<BulkUpload />} /> {/* Add BulkUpload component route */}
     </Routes>
   );
 }

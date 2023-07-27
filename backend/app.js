@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-
 const morgan = require("morgan");
 require("dotenv").config();
 require("./connection/mongodb");
@@ -18,12 +17,14 @@ const courseApi = require("./Routes/courses");
 const batchApi = require("./Routes/batches");
 const projectApi = require("./Routes/projects");
 const studentApi = require("./Routes/students"); // New route for students
+const bulkUploadApi = require("./Routes/bulkUpload"); // New route for bulk upload
 
 app.use("/api", userApi);
 app.use("/api", courseApi);
 app.use("/api", batchApi);
 app.use("/api", projectApi);
 app.use("/api", studentApi); // Mounting the student route
+app.use("/api", bulkUploadApi); // Mounting the bulk upload route
 
 app.listen(PORT, () => {
   console.log(`Server is running at port ${PORT}`);

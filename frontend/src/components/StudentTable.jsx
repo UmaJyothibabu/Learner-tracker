@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
 import {
   Paper,
   Table,
@@ -26,6 +25,7 @@ import styled from "@emotion/styled";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UpdateIcon from "@mui/icons-material/Update";
 import StudentForm from "./StudentForm";
+import BulkUpload from "./BulkUpload"; // Import the BulkUpload component
 
 const theme = createTheme();
 const TransparentButton = styled(Button)(({ theme }) => ({
@@ -41,19 +41,13 @@ const StudentTable = () => {
   const navigate = useNavigate();
   const [update, setUpdate] = useState(false);
   const [singleValue, setSingleValue] = useState({});
-
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
   const [placementStatusMenuAnchor, setPlacementStatusMenuAnchor] =
     useState(null);
   const [selectedPlacementStatus, setSelectedPlacementStatus] = useState(null);
-
   let [loading, setLoading] = useState(true);
-
-  const [userToken, setUserToken] = useState(
-    sessionStorage.getItem("userToken")
-  );
+  const [userToken, setUserToken] = useState(sessionStorage.getItem("userToken"));
   const [userRole, setUserRole] = useState(sessionStorage.getItem("role"));
   const [username, setusername] = useState(sessionStorage.getItem("username"));
 
@@ -164,12 +158,7 @@ const StudentTable = () => {
   };
 
   let finalJsx = (
-    <Grid
-      container
-      justifyContent="center"
-      alignItems="center"
-      style={{ height: "100vh" }}
-    >
+    <Grid container justifyContent="center" alignItems="center" style={{ height: "100vh" }}>
       <Grid item xs={1} sm={1} md={1} lg={1}></Grid>
       <Grid item xs={11} sm={11} md={11} lg={11}>
         {loading ? (
@@ -221,8 +210,7 @@ const StudentTable = () => {
                     <TableCell align="center" style={{ minWidth: 110 }}>
                       Placement Status
                     </TableCell>
-                    {(userRole === "Placement_office" ||
-                      userRole === "Admin") && (
+                    {(userRole === "Placement_office" || userRole === "Admin") && (
                       <TableCell align="center" style={{ minWidth: 50 }}>
                         Update Status
                       </TableCell>
@@ -301,8 +289,7 @@ const StudentTable = () => {
                             {row.training_head}
                           </TableCell>
                         )}
-                        {(userRole === "Admin" ||
-                          userRole === "Traininh_head") && (
+                        {(userRole === "Admin" || userRole === "Traininh_head") && (
                           <TableCell
                             sx={{
                               fontSize: "1.05rem",
@@ -324,8 +311,7 @@ const StudentTable = () => {
                         >
                           {row.placement_status}
                         </TableCell>
-                        {(userRole === "Admin" ||
-                          userRole === "Placement_officer") && (
+                        {(userRole === "Admin" || userRole === "Placement_officer") && (
                           <TableCell
                             sx={{
                               fontSize: "1.05rem",
@@ -346,37 +332,29 @@ const StudentTable = () => {
                             <Menu
                               anchorEl={placementStatusMenuAnchor}
                               open={Boolean(
-                                placementStatusMenuAnchor &&
-                                  selectedPlacementStatus
+                                placementStatusMenuAnchor && selectedPlacementStatus
                               )}
                               onClose={handlePlacementStatusMenuClose}
                             >
                               <MenuItem
-                                onClick={() =>
-                                  handlePlacementStatusSelect("Placed")
-                                }
+                                onClick={() => handlePlacementStatusSelect("Placed")}
                               >
                                 Placed
                               </MenuItem>
                               <MenuItem
-                                onClick={() =>
-                                  handlePlacementStatusSelect("Not interested")
-                                }
+                                onClick={() => handlePlacementStatusSelect("Not interested")}
                               >
                                 Not Interested
                               </MenuItem>
                               <MenuItem
-                                onClick={() =>
-                                  handlePlacementStatusSelect("Jobseeking")
-                                }
+                                onClick={() => handlePlacementStatusSelect("Jobseeking")}
                               >
                                 Job Seeking
                               </MenuItem>
                             </Menu>
                           </TableCell>
                         )}
-                        {(userRole === "Admin" ||
-                          userRole === "Training_head") && (
+                        {(userRole === "Admin" || userRole === "Training_head") && (
                           <TableCell
                             sx={{
                               fontSize: "1.05rem",
@@ -400,7 +378,6 @@ const StudentTable = () => {
                             <ThemeProvider theme={theme}>
                               <Tooltip title="Delete" arrow>
                                 <TransparentButton
-                                  // variant="contained"
                                   onClick={() => {
                                     deleteHandler(row._id);
                                   }}
@@ -447,4 +424,5 @@ const StudentTable = () => {
 
   return finalJsx;
 };
+
 export default StudentTable;
