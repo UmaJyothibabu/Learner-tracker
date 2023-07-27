@@ -23,6 +23,7 @@ router.get("/user/:designation", auth, async (req, res) => {
   try {
     if (req.body.role === "Admin" || req.body.role === "Training_head") {
       let { designation } = req.params;
+      console.log(designation);
       let users = await userData.find({ designation: designation });
       if (users.length !== 0) {
         res.json(users);

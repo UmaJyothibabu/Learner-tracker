@@ -1,9 +1,10 @@
 const router = require("express").Router();
 
 const projectData = require("../Models/project");
+const auth = require("../middleware/Auth");
 
 // get course
-router.get("/project", async (req, res) => {
+router.get("/project", auth, async (req, res) => {
   try {
     let projects = await projectData.find();
     res.json(projects);
@@ -13,12 +14,16 @@ router.get("/project", async (req, res) => {
 });
 
 //add new course
-router.post("/project", async (req, res) => {
+router.post("/project", auth, async (req, res) => {
   try {
-    console.log(req.body);
-    const newProject = projectData(req.body);
-    await newProject.save();
-    res.json({ message: "Project added successfully" });
+    if (req.body.role === "Admin") {
+      console.log(req.body);
+      const newProject = projectData(req.body);
+      await newProject.save();
+      res.json({ message: "Project added successfully" });
+    } else {
+      res.json({ message: "Access denied" });
+    }
   } catch (error) {
     res.json({ message: "Unable to post" });
   }
@@ -26,11 +31,15 @@ router.post("/project", async (req, res) => {
 
 // Delete course
 
-router.delete("/project/:id", async (req, res) => {
+router.delete("/project/:id", auth, async (req, res) => {
   try {
-    const { id } = req.params;
-    await projectData.findByIdAndDelete(id);
-    res.json({ message: "Project deleted successfully" });
+    if (req.body.role === "Admin") {
+      const { id } = req.params;
+      await projectData.findByIdAndDelete(id);
+      res.json({ message: "Project deleted successfully" });
+    } else {
+      res.json({ message: "Access denied" });
+    }
   } catch (error) {
     res.json({ message: "unable to delete", err: error.message });
   }

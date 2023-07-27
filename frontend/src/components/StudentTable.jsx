@@ -19,12 +19,14 @@ import {
   createTheme,
   ThemeProvider,
   Tooltip,
+  Box,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import styled from "@emotion/styled";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UpdateIcon from "@mui/icons-material/Update";
 import StudentForm from "./StudentForm";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import BulkUpload from "./BulkUpload"; // Import the BulkUpload component
 
 const theme = createTheme();
@@ -41,13 +43,17 @@ const StudentTable = () => {
   const navigate = useNavigate();
   const [update, setUpdate] = useState(false);
   const [singleValue, setSingleValue] = useState({});
+  const [add, setAdd] = useState(false);
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [placementStatusMenuAnchor, setPlacementStatusMenuAnchor] =
     useState(null);
   const [selectedPlacementStatus, setSelectedPlacementStatus] = useState(null);
   let [loading, setLoading] = useState(true);
-  const [userToken, setUserToken] = useState(sessionStorage.getItem("userToken"));
+  const [userToken, setUserToken] = useState(
+    sessionStorage.getItem("userToken")
+  );
   const [userRole, setUserRole] = useState(sessionStorage.getItem("role"));
   const [username, setusername] = useState(sessionStorage.getItem("username"));
 
@@ -117,9 +123,13 @@ const StudentTable = () => {
 
   const handlePlacementStatusSelect = (status) => {
     axios
-      .put(`http://localhost:8000/api/students/${selectedPlacementStatus}`, {
-        placement_status: status,
-      })
+      .put(
+        `http://localhost:8000/api/students/${selectedPlacementStatus}`,
+        {
+          placement_status: status,
+        },
+        config
+      )
       .then(() => {
         setData((prevData) =>
           prevData.map((item) =>
@@ -157,8 +167,17 @@ const StudentTable = () => {
       });
   };
 
+  const handleAddition = () => {
+    setAdd(true);
+  };
+
   let finalJsx = (
-    <Grid container justifyContent="center" alignItems="center" style={{ height: "100vh" }}>
+    <Grid
+      container
+      justifyContent="center"
+      alignItems="center"
+      style={{ height: "100vh" }}
+    >
       <Grid item xs={1} sm={1} md={1} lg={1}></Grid>
       <Grid item xs={11} sm={11} md={11} lg={11}>
         {loading ? (
@@ -167,249 +186,320 @@ const StudentTable = () => {
             <h1>Loading</h1>
           </div>
         ) : (
-          <Paper sx={{ width: "100%" }}>
-            <h2 className="App fw-bold py-4 fst-italic">Student List</h2>
-            <TableContainer sx={{ maxHeight: 500 }}>
-              <Table stickyHeader aria-label="sticky table">
-                <TableHead>
-                  <TableRow
-                    sx={{
-                      "& th": {
-                        color: "white",
-                        backgroundColor: "#47301F",
-                        fontSize: "1.25rem",
-                        fontWeight: "bold",
-                      },
-                    }}
-                  >
-                    <TableCell align="center" style={{ minWidth: 140 }}>
-                      Name
-                    </TableCell>
-                    <TableCell align="center" style={{ minWidth: 80 }}>
-                      Course
-                    </TableCell>
-                    <TableCell align="center" style={{ minWidth: 80 }}>
-                      Batch
-                    </TableCell>
-                    <TableCell align="center" style={{ minWidth: 80 }}>
-                      Project
-                    </TableCell>
-                    <TableCell align="center" style={{ minWidth: 120 }}>
-                      Course status
-                    </TableCell>
-                    {userRole === "Admin" && (
-                      <>
-                        <TableCell align="center" style={{ minWidth: 130 }}>
-                          Training Head
-                        </TableCell>
-                        <TableCell align="center" style={{ minWidth: 130 }}>
-                          Placement officer
-                        </TableCell>
-                      </>
-                    )}
-                    <TableCell align="center" style={{ minWidth: 110 }}>
-                      Placement Status
-                    </TableCell>
-                    {(userRole === "Placement_office" || userRole === "Admin") && (
-                      <TableCell align="center" style={{ minWidth: 50 }}>
-                        Update Status
-                      </TableCell>
-                    )}
-                    {(userRole === "Admin" || userRole === "Training_head") && (
-                      <TableCell align="center" style={{ minWidth: 110 }}>
-                        Update/Delete
-                      </TableCell>
-                    )}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {data
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row, i) => (
-                      <TableRow hover role="checkbox" tabIndex={-1} key={i}>
-                        <TableCell
+          <>
+            {(userRole === "Admin" || userRole === "Training_head") && add && (
+              <StudentForm
+                method="post"
+                userRole={userRole}
+                userToken={userToken}
+                username={username}
+                data={{
+                  student_name: "",
+                  email_id: "",
+                  phone: "",
+                  course: [],
+                  batch: [],
+                  project: "",
+                  course_status: "",
+                  placement_status: "",
+                  training_head: "",
+                  placement_officer: "",
+                  student_address: {
+                    address: "",
+                    district: "",
+                    state: "",
+                    pin: "",
+                  },
+                }}
+              />
+            )}
+            {!add && (
+              <>
+                <Box align="right" sx={{ marginRight: "20px" }} gutterbottom>
+                  <Tooltip title="Add" arrow>
+                    <PersonAddIcon
+                      sx={{
+                        height: "50px",
+                        width: "50px",
+                        color: "#3F708D",
+                      }}
+                      onClick={handleAddition}
+                    />
+                  </Tooltip>
+                </Box>
+                <Paper sx={{ width: "100%" }}>
+                  <h2 className="App fw-bold py-4 fst-italic">Student List</h2>
+                  <TableContainer sx={{ maxHeight: 500 }}>
+                    <Table stickyHeader aria-label="sticky table">
+                      <TableHead>
+                        <TableRow
                           sx={{
-                            fontSize: "1.05rem",
-                            fontWeight: "bold",
-                            color: "#47301F",
-                          }}
-                          align="center"
-                        >
-                          {row.student_name}
-                        </TableCell>
-                        <TableCell
-                          sx={{
-                            fontSize: "1.05rem",
-                            fontWeight: "bold",
-                            color: "#47301F",
-                          }}
-                          align="center"
-                        >
-                          {row.course}
-                        </TableCell>
-                        <TableCell
-                          sx={{
-                            fontSize: "1.05rem",
-                            fontWeight: "bold",
-                            color: "#47301F",
-                          }}
-                          align="center"
-                        >
-                          {row.batch}
-                        </TableCell>
-                        <TableCell
-                          sx={{
-                            fontSize: "1.05rem",
-                            fontWeight: "bold",
-                            color: "#47301F",
-                          }}
-                          align="center"
-                        >
-                          {row.project}
-                        </TableCell>
-                        <TableCell
-                          sx={{
-                            fontSize: "1.05rem",
-                            fontWeight: "bold",
-                            color: "#47301F",
-                          }}
-                          align="center"
-                        >
-                          {row.course_status}
-                        </TableCell>
-                        {userRole === "Admin" && (
-                          <TableCell
-                            sx={{
-                              fontSize: "1.05rem",
+                            "& th": {
+                              color: "white",
+                              backgroundColor: "#47301F",
+                              fontSize: "1.25rem",
                               fontWeight: "bold",
-                              color: "#47301F",
-                            }}
-                            align="center"
-                          >
-                            {row.training_head}
+                            },
+                          }}
+                        >
+                          <TableCell align="center" style={{ minWidth: 140 }}>
+                            Name
                           </TableCell>
-                        )}
-                        {(userRole === "Admin" || userRole === "Traininh_head") && (
-                          <TableCell
-                            sx={{
-                              fontSize: "1.05rem",
-                              fontWeight: "bold",
-                              color: "#47301F",
-                            }}
-                            align="center"
-                          >
-                            {row.placement_officer}
+                          <TableCell align="center" style={{ minWidth: 80 }}>
+                            Course
                           </TableCell>
-                        )}
-                        <TableCell
-                          sx={{
-                            fontSize: "1.05rem",
-                            fontWeight: "bold",
-                            color: "#47301F",
-                          }}
-                          align="center"
-                        >
-                          {row.placement_status}
-                        </TableCell>
-                        {(userRole === "Admin" || userRole === "Placement_officer") && (
-                          <TableCell
-                            sx={{
-                              fontSize: "1.05rem",
-                              fontWeight: "bold",
-                              color: "#47301F",
-                            }}
-                            align="center"
-                          >
-                            <IconButton
-                              color="secondary"
-                              style={{ backgroundColor: "#CCCCCC" }}
-                              onClick={(event) =>
-                                handlePlacementStatusMenuOpen(event, row)
-                              }
+                          <TableCell align="center" style={{ minWidth: 80 }}>
+                            Batch
+                          </TableCell>
+                          <TableCell align="center" style={{ minWidth: 80 }}>
+                            Project
+                          </TableCell>
+                          <TableCell align="center" style={{ minWidth: 120 }}>
+                            Course status
+                          </TableCell>
+                          {userRole === "Admin" && (
+                            <>
+                              <TableCell
+                                align="center"
+                                style={{ minWidth: 130 }}
+                              >
+                                Training Head
+                              </TableCell>
+                              <TableCell
+                                align="center"
+                                style={{ minWidth: 130 }}
+                              >
+                                Placement officer
+                              </TableCell>
+                            </>
+                          )}
+                          <TableCell align="center" style={{ minWidth: 110 }}>
+                            Placement Status
+                          </TableCell>
+                          {(userRole === "Placement_office" ||
+                            userRole === "Admin") && (
+                            <TableCell align="center" style={{ minWidth: 50 }}>
+                              Update Status
+                            </TableCell>
+                          )}
+                          {(userRole === "Admin" ||
+                            userRole === "Training_head") && (
+                            <TableCell align="center" style={{ minWidth: 110 }}>
+                              Update/Delete
+                            </TableCell>
+                          )}
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {data
+                          .slice(
+                            page * rowsPerPage,
+                            page * rowsPerPage + rowsPerPage
+                          )
+                          .map((row, i) => (
+                            <TableRow
+                              hover
+                              role="checkbox"
+                              tabIndex={-1}
+                              key={i}
                             >
-                              <MoreVertIcon />
-                            </IconButton>
-                            <Menu
-                              anchorEl={placementStatusMenuAnchor}
-                              open={Boolean(
-                                placementStatusMenuAnchor && selectedPlacementStatus
+                              <TableCell
+                                sx={{
+                                  fontSize: "1.05rem",
+                                  fontWeight: "bold",
+                                  color: "#47301F",
+                                }}
+                                align="center"
+                              >
+                                {row.student_name}
+                              </TableCell>
+                              <TableCell
+                                sx={{
+                                  fontSize: "1.05rem",
+                                  fontWeight: "bold",
+                                  color: "#47301F",
+                                }}
+                                align="center"
+                              >
+                                {row.course}
+                              </TableCell>
+                              <TableCell
+                                sx={{
+                                  fontSize: "1.05rem",
+                                  fontWeight: "bold",
+                                  color: "#47301F",
+                                }}
+                                align="center"
+                              >
+                                {row.batch}
+                              </TableCell>
+                              <TableCell
+                                sx={{
+                                  fontSize: "1.05rem",
+                                  fontWeight: "bold",
+                                  color: "#47301F",
+                                }}
+                                align="center"
+                              >
+                                {row.project}
+                              </TableCell>
+                              <TableCell
+                                sx={{
+                                  fontSize: "1.05rem",
+                                  fontWeight: "bold",
+                                  color: "#47301F",
+                                }}
+                                align="center"
+                              >
+                                {row.course_status}
+                              </TableCell>
+                              {userRole === "Admin" && (
+                                <TableCell
+                                  sx={{
+                                    fontSize: "1.05rem",
+                                    fontWeight: "bold",
+                                    color: "#47301F",
+                                  }}
+                                  align="center"
+                                >
+                                  {row.training_head}
+                                </TableCell>
                               )}
-                              onClose={handlePlacementStatusMenuClose}
-                            >
-                              <MenuItem
-                                onClick={() => handlePlacementStatusSelect("Placed")}
-                              >
-                                Placed
-                              </MenuItem>
-                              <MenuItem
-                                onClick={() => handlePlacementStatusSelect("Not interested")}
-                              >
-                                Not Interested
-                              </MenuItem>
-                              <MenuItem
-                                onClick={() => handlePlacementStatusSelect("Jobseeking")}
-                              >
-                                Job Seeking
-                              </MenuItem>
-                            </Menu>
-                          </TableCell>
-                        )}
-                        {(userRole === "Admin" || userRole === "Training_head") && (
-                          <TableCell
-                            sx={{
-                              fontSize: "1.05rem",
-                              fontWeight: "bold",
-                              color: "#47301F",
-                            }}
-                            align="center"
-                          >
-                            <ThemeProvider theme={theme}>
-                              <Tooltip title="Update" arrow>
-                                <TransparentButton
-                                  onClick={() => {
-                                    updateStudent(row);
+                              {(userRole === "Admin" ||
+                                userRole === "Training_head") && (
+                                <TableCell
+                                  sx={{
+                                    fontSize: "1.05rem",
+                                    fontWeight: "bold",
+                                    color: "#47301F",
                                   }}
+                                  align="center"
                                 >
-                                  <UpdateIcon style={{ color: "#335A71" }} />{" "}
-                                </TransparentButton>
-                              </Tooltip>
-                            </ThemeProvider>
-                            &nbsp;
-                            <ThemeProvider theme={theme}>
-                              <Tooltip title="Delete" arrow>
-                                <TransparentButton
-                                  onClick={() => {
-                                    deleteHandler(row._id);
+                                  {row.placement_officer}
+                                </TableCell>
+                              )}
+                              <TableCell
+                                sx={{
+                                  fontSize: "1.05rem",
+                                  fontWeight: "bold",
+                                  color: "#47301F",
+                                }}
+                                align="center"
+                              >
+                                {row.placement_status}
+                              </TableCell>
+                              {(userRole === "Admin" ||
+                                userRole === "Placement_officer") && (
+                                <TableCell
+                                  sx={{
+                                    fontSize: "1.05rem",
+                                    fontWeight: "bold",
+                                    color: "#47301F",
                                   }}
+                                  align="center"
                                 >
-                                  <DeleteIcon
-                                    color="error"
-                                    // onClick={() => {
-                                    //   // deleteHandler(row._id);
-                                    //   deleteHandler(i);
-                                    // }}
-                                  />
-                                </TransparentButton>
-                              </Tooltip>
-                            </ThemeProvider>
-                          </TableCell>
-                        )}
-                      </TableRow>
-                    ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <TablePagination
-              sx={{ backgroundColor: "#F2F2F2" }}
-              rowsPerPageOptions={[10, 25, 100]}
-              component="div"
-              count={data.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-          </Paper>
+                                  <IconButton
+                                    color="secondary"
+                                    style={{ backgroundColor: "#CCCCCC" }}
+                                    onClick={(event) =>
+                                      handlePlacementStatusMenuOpen(event, row)
+                                    }
+                                  >
+                                    <MoreVertIcon />
+                                  </IconButton>
+                                  <Menu
+                                    anchorEl={placementStatusMenuAnchor}
+                                    open={Boolean(
+                                      placementStatusMenuAnchor &&
+                                        selectedPlacementStatus
+                                    )}
+                                    onClose={handlePlacementStatusMenuClose}
+                                  >
+                                    <MenuItem
+                                      onClick={() =>
+                                        handlePlacementStatusSelect("Placed")
+                                      }
+                                    >
+                                      Placed
+                                    </MenuItem>
+                                    <MenuItem
+                                      onClick={() =>
+                                        handlePlacementStatusSelect(
+                                          "Not interested"
+                                        )
+                                      }
+                                    >
+                                      Not Interested
+                                    </MenuItem>
+                                    <MenuItem
+                                      onClick={() =>
+                                        handlePlacementStatusSelect(
+                                          "Jobseeking"
+                                        )
+                                      }
+                                    >
+                                      Job Seeking
+                                    </MenuItem>
+                                  </Menu>
+                                </TableCell>
+                              )}
+                              {(userRole === "Admin" ||
+                                userRole === "Training_head") && (
+                                <TableCell
+                                  sx={{
+                                    fontSize: "1.05rem",
+                                    fontWeight: "bold",
+                                    color: "#47301F",
+                                  }}
+                                  align="center"
+                                >
+                                  <ThemeProvider theme={theme}>
+                                    <Tooltip title="Update" arrow>
+                                      <TransparentButton
+                                        onClick={() => {
+                                          updateStudent(row);
+                                        }}
+                                      >
+                                        <UpdateIcon
+                                          style={{ color: "#335A71" }}
+                                        />{" "}
+                                      </TransparentButton>
+                                    </Tooltip>
+                                  </ThemeProvider>
+                                  &nbsp;
+                                  <ThemeProvider theme={theme}>
+                                    <Tooltip title="Delete" arrow>
+                                      <TransparentButton
+                                        // variant="contained"
+                                        onClick={() => {
+                                          deleteHandler(row._id);
+                                        }}
+                                      >
+                                        <DeleteIcon color="error" />
+                                      </TransparentButton>
+                                    </Tooltip>
+                                  </ThemeProvider>
+                                </TableCell>
+                              )}
+                            </TableRow>
+                          ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                  <TablePagination
+                    sx={{ backgroundColor: "#F2F2F2" }}
+                    rowsPerPageOptions={[10, 25, 100]}
+                    component="div"
+                    count={data.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                  />
+                </Paper>
+              </>
+            )}
+          </>
         )}
       </Grid>
     </Grid>
@@ -420,7 +510,16 @@ const StudentTable = () => {
     setSingleValue(val);
   };
 
-  if (update) finalJsx = <StudentForm method="put" data={singleValue} />;
+  if (update)
+    finalJsx = (
+      <StudentForm
+        method="put"
+        userRole={userRole}
+        userToken={userToken}
+        username={username}
+        data={singleValue}
+      />
+    );
 
   return finalJsx;
 };

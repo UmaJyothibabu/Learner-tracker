@@ -14,6 +14,7 @@ import {
   ThemeProvider,
   createTheme,
   Tooltip,
+  Box,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UpdateIcon from "@mui/icons-material/Update";
@@ -23,10 +24,12 @@ import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 import UserForm from "./UserForm";
 import UserDeletion from "./UserDeletion";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 
 const UserList = () => {
   let [loading, setLoading] = useState(true);
   let [data, setData] = useState([]);
+  const [add, setAdd] = useState(false);
 
   const [update, setUpdate] = useState(false); //for checking wheather it is adding new or updating old one
   const navigate = useNavigate();
@@ -93,10 +96,15 @@ const UserList = () => {
     setPage(0);
   };
 
+  const handleAddition = () => {
+    setAdd(true);
+  };
+
   let finalJSX = (
     <Grid
       container
-      justifyContent="center"
+      overflow="hidden"
+      // justifyContent="center"
       alignItems="center"
       style={{ height: "100vh" }}
     >
@@ -108,208 +116,258 @@ const UserList = () => {
             <h1>Loading</h1>
           </div>
         ) : (
-          <Paper
-            sx={{
-              width: "98.5%",
-              overflow: "hidden",
-              marginLeft: "10px",
-              marginRight: "10px",
-            }}
-          >
-            <h2 className="App fw-bold py-4 fst-italic">Facuilty Details</h2>
-            <TableContainer sx={{ maxHeight: 440 }}>
-              <Table stickyHeader aria-label="sticky table">
-                <TableHead>
-                  <TableRow
-                    sx={{
-                      "& th": {
-                        color: "white",
-                        backgroundColor: "#47301F",
-                        fontSize: "1.25rem",
-                        fontWeight: "bold",
-                      },
-                    }}
-                  >
-                    <TableCell align="center" style={{ minWidth: 150 }}>
-                      Name
-                    </TableCell>
-                    <TableCell align="center" style={{ minWidth: 100 }}>
-                      USERNAME
-                    </TableCell>
-                    <TableCell align="center" style={{ minWidth: 170 }}>
-                      Email
-                    </TableCell>
-                    <TableCell align="center" style={{ minWidth: 120 }}>
-                      Phone
-                    </TableCell>
-                    <TableCell align="center" style={{ minWidth: 170 }}>
-                      Designation
-                    </TableCell>
-                    <TableCell align="center" style={{ minWidth: 80 }}>
-                      BATCH/COURSE
-                    </TableCell>
-                    <TableCell align="center" style={{ minWidth: 170 }}>
-                      Update/Delete
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {data
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map(
-                      (row, i) =>
-                        row.designation !== "Admin" && (
-                          <TableRow hover role="checkbox" tabIndex={-1} key={i}>
-                            <TableCell
-                              sx={{
-                                fontSize: "1.05rem",
-                                fontWeight: "bold",
-                                color: "#47301F",
-                              }}
-                              align="center"
-                            >
-                              {row.name}
-                            </TableCell>
-                            <TableCell
-                              sx={{
-                                fontSize: "1.05rem",
-                                fontWeight: "bold",
-                                color: "#47301F",
-                              }}
-                              align="center"
-                            >
-                              {row.username}
-                            </TableCell>
-                            <TableCell
-                              sx={{
-                                fontSize: "1.05rem",
-                                fontWeight: "bold",
-                                color: "#47301F",
-                              }}
-                              align="center"
-                            >
-                              {row.email}
-                            </TableCell>
-                            <TableCell
-                              sx={{
-                                fontSize: "1.05rem",
-                                fontWeight: "bold",
-                                color: "#47301F",
-                              }}
-                              align="center"
-                            >
-                              {row.phone}
-                            </TableCell>
-                            <TableCell
-                              sx={{
-                                fontSize: "1.05rem",
-                                fontWeight: "bold",
-                                color: "#47301F",
-                              }}
-                              align="center"
-                            >
-                              {row.designation}
-                            </TableCell>
-                            {row.designation === "Training_head" ? (
-                              <TableCell
-                                sx={{
-                                  fontSize: "1.05rem",
-                                  fontWeight: "bold",
-                                  color: "#47301F",
-                                }}
-                                align="center"
-                              >
-                                {row.course.map((val, i) => (
-                                  <>
-                                    {val}
-                                    <br />
-                                  </>
-                                ))}
-                              </TableCell>
-                            ) : (
-                              <TableCell
-                                sx={{
-                                  fontSize: "1.05rem",
-                                  fontWeight: "bold",
-                                  color: "#47301F",
-                                }}
-                                align="center"
-                              >
-                                {row.batch.map((val, i) => (
-                                  <>
-                                    {val}
-                                    <br />
-                                  </>
-                                ))}
-                              </TableCell>
-                            )}
+          <>
+            {userRole === "Admin" && add && (
+              <UserForm
+                userToken={userToken}
+                userRole={userRole}
+                method="post"
+                data={{
+                  name: "",
+                  username: "",
+                  password: "",
+                  confirmpassword: "",
+                  email: "",
+                  phone: "",
+                  designation: "Placement_officer",
+                  batch: [],
+                  course: [],
+                }}
+              />
+            )}
+            {!add && (
+              <>
+                <Box align="right" sx={{ marginRight: "20px" }} gutterbottom>
+                  <Tooltip title="Add" arrow>
+                    <PersonAddIcon
+                      sx={{
+                        height: "50px",
+                        width: "50px",
+                        color: "#3F708D",
+                      }}
+                      onClick={handleAddition}
+                    />
+                  </Tooltip>
+                </Box>
 
-                            <TableCell
-                              sx={{
-                                fontSize: "1.05rem",
-                                fontWeight: "bold",
-                                color: "#47301F",
-                              }}
-                              align="center"
-                            >
-                              <ThemeProvider theme={theme}>
-                                <Tooltip title="Update" arrow>
-                                  <TransparentButton
-                                    onClick={() => {
-                                      updateUser(row);
+                <Paper
+                  sx={{
+                    width: "98.5%",
+                    overflow: "hidden",
+                    marginLeft: "10px",
+                    marginRight: "10px",
+                  }}
+                >
+                  <h2 className="App fw-bold py-4 fst-italic">
+                    Facuilty Details
+                  </h2>
+                  <TableContainer sx={{ maxHeight: 440 }}>
+                    <Table stickyHeader aria-label="sticky table">
+                      <TableHead>
+                        <TableRow
+                          sx={{
+                            "& th": {
+                              color: "white",
+                              backgroundColor: "#47301F",
+                              fontSize: "1.25rem",
+                              fontWeight: "bold",
+                            },
+                          }}
+                        >
+                          <TableCell align="center" style={{ minWidth: 150 }}>
+                            Name
+                          </TableCell>
+                          <TableCell align="center" style={{ minWidth: 100 }}>
+                            USERNAME
+                          </TableCell>
+                          <TableCell align="center" style={{ minWidth: 170 }}>
+                            Email
+                          </TableCell>
+                          <TableCell align="center" style={{ minWidth: 120 }}>
+                            Phone
+                          </TableCell>
+                          <TableCell align="center" style={{ minWidth: 170 }}>
+                            Designation
+                          </TableCell>
+                          <TableCell align="center" style={{ minWidth: 80 }}>
+                            BATCH/COURSE
+                          </TableCell>
+                          <TableCell align="center" style={{ minWidth: 170 }}>
+                            Update/Delete
+                          </TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {data
+                          .slice(
+                            page * rowsPerPage,
+                            page * rowsPerPage + rowsPerPage
+                          )
+                          .map(
+                            (row, i) =>
+                              row.designation !== "Admin" && (
+                                <TableRow
+                                  hover
+                                  role="checkbox"
+                                  tabIndex={-1}
+                                  key={i}
+                                >
+                                  <TableCell
+                                    sx={{
+                                      fontSize: "1.05rem",
+                                      fontWeight: "bold",
+                                      color: "#47301F",
                                     }}
+                                    align="center"
                                   >
-                                    <UpdateIcon style={{ color: "#335A71" }} />{" "}
-                                    {/* Update */}
-                                  </TransparentButton>
-                                </Tooltip>
-                              </ThemeProvider>
-                              &nbsp;
-                              <ThemeProvider theme={theme}>
-                                <Tooltip title="Delete" arrow>
-                                  <TransparentButton
-                                  // variant="contained"
-
-                                  // onClick={() => {
-                                  //   deleteHandler(row._id);
-                                  // }}
+                                    {row.name}
+                                  </TableCell>
+                                  <TableCell
+                                    sx={{
+                                      fontSize: "1.05rem",
+                                      fontWeight: "bold",
+                                      color: "#47301F",
+                                    }}
+                                    align="center"
                                   >
-                                    <DeleteIcon
-                                      color="error"
-                                      onClick={() => {
-                                        // deleteHandler(row._id);
-                                        deleteHandler(i);
+                                    {row.username}
+                                  </TableCell>
+                                  <TableCell
+                                    sx={{
+                                      fontSize: "1.05rem",
+                                      fontWeight: "bold",
+                                      color: "#47301F",
+                                    }}
+                                    align="center"
+                                  >
+                                    {row.email}
+                                  </TableCell>
+                                  <TableCell
+                                    sx={{
+                                      fontSize: "1.05rem",
+                                      fontWeight: "bold",
+                                      color: "#47301F",
+                                    }}
+                                    align="center"
+                                  >
+                                    {row.phone}
+                                  </TableCell>
+                                  <TableCell
+                                    sx={{
+                                      fontSize: "1.05rem",
+                                      fontWeight: "bold",
+                                      color: "#47301F",
+                                    }}
+                                    align="center"
+                                  >
+                                    {row.designation}
+                                  </TableCell>
+                                  {row.designation === "Training_head" ? (
+                                    <TableCell
+                                      sx={{
+                                        fontSize: "1.05rem",
+                                        fontWeight: "bold",
+                                        color: "#47301F",
                                       }}
-                                    />
-                                    {/* Delete */}
-                                    {showUserDeletion && rowValue === i && (
-                                      <UserDeletion
-                                        user={row}
-                                        userToken={userToken}
-                                        userRole={userRole}
-                                      />
-                                    )}
-                                  </TransparentButton>
-                                </Tooltip>
-                              </ThemeProvider>
-                            </TableCell>
-                          </TableRow>
-                        )
-                    )}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <TablePagination
-              sx={{ backgroundColor: "#E2B179" }}
-              rowsPerPageOptions={[10, 25, 100]}
-              component="div"
-              count={data.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-          </Paper>
+                                      align="center"
+                                    >
+                                      {row.course.map((val, i) => (
+                                        <>
+                                          {val}
+                                          <br />
+                                        </>
+                                      ))}
+                                    </TableCell>
+                                  ) : (
+                                    <TableCell
+                                      sx={{
+                                        fontSize: "1.05rem",
+                                        fontWeight: "bold",
+                                        color: "#47301F",
+                                      }}
+                                      align="center"
+                                    >
+                                      {row.batch.map((val, i) => (
+                                        <>
+                                          {val}
+                                          <br />
+                                        </>
+                                      ))}
+                                    </TableCell>
+                                  )}
+
+                                  <TableCell
+                                    sx={{
+                                      fontSize: "1.05rem",
+                                      fontWeight: "bold",
+                                      color: "#47301F",
+                                    }}
+                                    align="center"
+                                  >
+                                    <ThemeProvider theme={theme}>
+                                      <Tooltip title="Update" arrow>
+                                        <TransparentButton
+                                          onClick={() => {
+                                            updateUser(row);
+                                          }}
+                                        >
+                                          <UpdateIcon
+                                            style={{ color: "#335A71" }}
+                                          />{" "}
+                                          {/* Update */}
+                                        </TransparentButton>
+                                      </Tooltip>
+                                    </ThemeProvider>
+                                    &nbsp;
+                                    <ThemeProvider theme={theme}>
+                                      <Tooltip title="Delete" arrow>
+                                        <TransparentButton
+                                        // variant="contained"
+
+                                        // onClick={() => {
+                                        //   deleteHandler(row._id);
+                                        // }}
+                                        >
+                                          <DeleteIcon
+                                            color="error"
+                                            onClick={() => {
+                                              // deleteHandler(row._id);
+                                              deleteHandler(i);
+                                            }}
+                                          />
+                                          {/* Delete */}
+                                          {showUserDeletion &&
+                                            rowValue === i && (
+                                              <UserDeletion
+                                                user={row}
+                                                userToken={userToken}
+                                                userRole={userRole}
+                                              />
+                                            )}
+                                        </TransparentButton>
+                                      </Tooltip>
+                                    </ThemeProvider>
+                                  </TableCell>
+                                </TableRow>
+                              )
+                          )}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                  <TablePagination
+                    sx={{ backgroundColor: "#E2B179" }}
+                    rowsPerPageOptions={[10, 25, 100]}
+                    component="div"
+                    count={data.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                  />
+                </Paper>
+              </>
+            )}
+          </>
         )}
       </Grid>
     </Grid>
@@ -321,7 +379,15 @@ const UserList = () => {
     setSingleValue(val);
   };
 
-  if (update) finalJSX = <UserForm method="put" data={singleValue} />;
+  if (update)
+    finalJSX = (
+      <UserForm
+        method="put"
+        userToken={userToken}
+        userRole={userRole}
+        data={singleValue}
+      />
+    );
   return finalJSX;
 };
 

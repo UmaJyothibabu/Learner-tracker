@@ -3,14 +3,16 @@ import axios from "axios";
 import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
 import {
+  Box,
   Button,
   Grid,
   MenuItem,
   Paper,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
-
+import SkipPreviousIcon from "@mui/icons-material/SkipPrevious";
 import StudentFormSchema from "../Schema/StudentFormSchema"; // Import the form validation schema
 
 const StudentForm = (props) => {
@@ -18,14 +20,16 @@ const StudentForm = (props) => {
   const [courses, setCourses] = useState([]);
   const [batches, setBatches] = useState([]);
   const [projects, setProjects] = useState([]);
+  const [trainingHeads, setTrainingHeads] = useState([]);
+  const [placemenOfficers, setPlacementOfficers] = useState([]);
 
   const navigate = useNavigate();
 
-  const [userToken, setUserToken] = useState(
-    sessionStorage.getItem("userToken")
-  );
-  const [userRole, setUserRole] = useState(sessionStorage.getItem("role"));
-  const [username, setUsername] = useState(sessionStorage.getItem("username"));
+  const [userToken, setUserToken] = useState(props.userToken);
+
+  // const [userId, setUserId] = useState(sessionStorage.getItem("userId"));
+  const [userRole, setUserRole] = useState(props.userRole);
+  const [username, setUsername] = useState(props.username);
   const config = {
     headers: {
       authorization: " Bearer " + userToken,
@@ -33,27 +37,46 @@ const StudentForm = (props) => {
   };
 
   useEffect(() => {
-    const fetchCourseAndBatchData = async () => {
-      try {
-        const courseResponse = await axios.get(
-          "http://localhost:8000/api/course"
-        );
-        const batchResponse = await axios.get(
-          "http://localhost:8000/api/batch"
-        );
-        const projectResponse = await axios.get(
-          "http://localhost:8000/api/project"
-        );
+    if (userRole === "Admin" || userRole === "Training_head") {
+      const fetchCourseAndBatchData = async () => {
+        try {
+          const courseResponse = await axios.get(
+            "http://localhost:8000/api/course",
+            config
+          );
+          const batchResponse = await axios.get(
+            "http://localhost:8000/api/batch",
+            config
+          );
+          const projectResponse = await axios.get(
+            "http://localhost:8000/api/project",
+            config
+          );
+          const trainerResponse = await axios.get(
+            `http://localhost:8000/api/user/Training_head`,
+            config
+          );
+          const placementOfficerResponse = await axios.get(
+            `http://localhost:8000/api/user/Placement_officer`,
+            config
+          );
+          console.log(placementOfficerResponse.data);
+          console.log(trainerResponse.data);
+          setPlacementOfficers(placementOfficerResponse.data);
+          setTrainingHeads(trainerResponse.data);
+          setCourses(courseResponse.data);
+          setBatches(batchResponse.data);
+          setProjects(projectResponse.data);
+        } catch (error) {
+          console.log("Error fetching data:", error);
+        }
+      };
 
-        setCourses(courseResponse.data);
-        setBatches(batchResponse.data);
-        setProjects(projectResponse.data);
-      } catch (error) {
-        console.log("Error fetching data:", error);
-      }
-    };
-
-    fetchCourseAndBatchData();
+      fetchCourseAndBatchData();
+    } else {
+      alert("Access denied");
+      navigate("/");
+    }
   }, []);
 
   const {
@@ -66,7 +89,8 @@ const StudentForm = (props) => {
   } = useFormik({
     initialValues: {
       ...props.data,
-
+      training_head:
+        userRole === "Training_head" ? username : props.data.training_head,
       student_address: props.data.student_address || {
         address: "",
         district: "",
@@ -74,27 +98,10 @@ const StudentForm = (props) => {
         pin: "",
       },
     },
-    // course: props.data.course || "",
-    // batch: props.data.batch || "",
-    // project: props.data.project || "",
-    // },
+
     validationSchema: StudentFormSchema,
     onSubmit: async (values) => {
       try {
-        // Replace the selected course, batch, and project IDs with their names
-        // const selectedCourse = courses.find(
-        //   (course) => course._id === values.course
-        // );
-        // const selectedBatch = batches.find(
-        //   (batch) => batch._id === values.batch
-        // );
-        // const selectedProject = projects.find(
-        //   (project) => project._id === values.project
-        // );
-
-        // values.course = selectedCourse ? selectedCourse.course_name : "";
-        // values.batch = selectedBatch ? selectedBatch.batch_name : "";
-        // values.project = selectedProject ? selectedProject.project_name : "";
         if (props.method === "post") {
           const response = await axios.post(
             "http://localhost:8000/api/students",
@@ -104,7 +111,7 @@ const StudentForm = (props) => {
           console.log("Form submission successful!", response.data);
           if (response.data.message === "Student added successfully") {
             alert(response.data.message);
-            navigate("/studentTable");
+            window.location.reload();
           } else if (response.data.message === "Unauthorised user") {
             alert(response.data.message);
             navigate("/");
@@ -140,6 +147,22 @@ const StudentForm = (props) => {
 
   return (
     <Grid justifyContent="center" className="studentForm">
+      <Box sx={{ paddingBottom: "25px" }}>
+        <Tooltip title="Back to Student table" arrow>
+          <Button>
+            <SkipPreviousIcon
+              sx={{
+                height: "50px",
+                width: "50px",
+                color: "#3F708D",
+              }}
+              onClick={() => {
+                window.location.reload();
+              }}
+            />
+          </Button>
+        </Tooltip>
+      </Box>
       <Paper elevation={1}>
         <Grid align="center">
           <Typography variant="h4" gutterBottom className="register">
@@ -281,13 +304,15 @@ const StudentForm = (props) => {
                   helperText={errors.placement_status}
                 >
                   <MenuItem value="Placed">Placed</MenuItem>
-                  <MenuItem value="Not Placed">Not Placed</MenuItem>
+                  <MenuItem value="Job Seeking">Job Seeking</MenuItem>
+                  <MenuItem value="Not interested">Not Interested</MenuItem>
                 </TextField>
               </Grid>
               <Grid item xs={12} sm={12} md={6} lg={6}>
                 <TextField
                   fullWidth
                   sx={{ m: 2 }}
+                  select
                   label="Training Head"
                   value={values.training_head}
                   name="training_head"
@@ -295,12 +320,19 @@ const StudentForm = (props) => {
                   onChange={handleChange}
                   error={Boolean(errors.training_head)}
                   helperText={errors.training_head}
-                />
+                >
+                  {trainingHeads.map((thead) => (
+                    <MenuItem key={thead.name} value={thead.username}>
+                      {thead.name}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Grid>
               <Grid item xs={12} sm={12} md={6} lg={6}>
                 <TextField
                   fullWidth
                   sx={{ m: 2 }}
+                  select
                   label="Placement Officer"
                   value={values.placement_officer}
                   name="placement_officer"
@@ -308,7 +340,19 @@ const StudentForm = (props) => {
                   onChange={handleChange}
                   error={Boolean(errors.placement_officer)}
                   helperText={errors.placement_officer}
-                />
+                >
+                  {placemenOfficers.map((pofficer) => {
+                    const batches = pofficer.batch.filter(
+                      (val) => val === values.batch
+                    );
+                    if (batches.length !== 0)
+                      return (
+                        <MenuItem key={pofficer.name} value={pofficer.username}>
+                          {pofficer.name}
+                        </MenuItem>
+                      );
+                  })}
+                </TextField>
               </Grid>
               <Grid item xs={12} sm={12} md={6} lg={6}>
                 <TextField
@@ -365,34 +409,32 @@ const StudentForm = (props) => {
               </Grid>
 
               {/* Buttons */}
-              <Grid item xs={12} sm={12} md={12} lg={12}>
-                <Grid container justifyContent="center">
-                  <Grid item>
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      color="primary"
-                      sx={{ padding: "4%", width: "70%" }}
-                      disabled={isSubmitting}
-                    >
-                      {props.method === "post"
-                        ? "Register Student"
-                        : "Update Student"}
-                    </Button>
-                  </Grid>
-                  <Grid item>
-                    <Button
-                      type="button"
-                      variant="contained"
-                      color="secondary"
-                      sx={{ padding: "4%", width: "40%" }}
-                      onClick={handleReset}
-                      disabled={isSubmitting}
-                    >
-                      Reset
-                    </Button>
-                  </Grid>
-                </Grid>
+              <Grid item xs={12} sm={12} md={6} lg={6}>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  // sx={{ padding: "4%", width: "70%" }}
+                  disabled={isSubmitting}
+                >
+                  {props.method === "post"
+                    ? "Register Student"
+                    : "Update Student"}
+                </Button>
+              </Grid>
+              <Grid item xs={12} sm={12} md={6} lg={6}>
+                <Button
+                  type="button"
+                  fullWidth
+                  variant="contained"
+                  color="secondary"
+                  sx={{ padding: "2%", marginLeft: "6%", marginBottom: "6%" }}
+                  onClick={handleReset}
+                  disabled={isSubmitting}
+                >
+                  Reset
+                </Button>
               </Grid>
             </Grid>
           </form>

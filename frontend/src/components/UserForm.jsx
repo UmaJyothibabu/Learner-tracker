@@ -5,6 +5,7 @@ import {
   MenuItem,
   Paper,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
@@ -13,6 +14,7 @@ import axios from "axios";
 import { useFormik } from "formik";
 import { UserFormSchema } from "../Schema/UserFormSchema";
 import { useNavigate } from "react-router-dom";
+import SkipPreviousIcon from "@mui/icons-material/SkipPrevious";
 
 const UserForm = (props) => {
   // Store details of courses and batches
@@ -22,10 +24,9 @@ const UserForm = (props) => {
 
   const navigate = useNavigate();
 
-  const [userToken, setUserToken] = useState(
-    sessionStorage.getItem("userToken")
-  );
-  const [userRole, setUserRole] = useState(sessionStorage.getItem("role"));
+  const [userToken, setUserToken] = useState(props.userToken);
+
+  const [userRole, setUserRole] = useState(props.userRole);
   // const [username, setUsername] = useState(sessionStorage.getItem("username"));
   const config = {
     headers: {
@@ -82,7 +83,7 @@ const UserForm = (props) => {
           .then((response) => {
             if (response.data.message === "User added successfully") {
               alert(response.data.message);
-              navigate("/userinfo");
+              window.location.reload();
             } else if (response.data.message === "Unauthorised user") {
               alert(response.data.message);
               navigate("/");
@@ -91,7 +92,7 @@ const UserForm = (props) => {
           .catch((err) => {
             console.log(err);
             alert("Unable to addd data");
-            navigate("/userform");
+            window.location.reload();
           });
       }
       if (props.method === "put") {
@@ -118,266 +119,287 @@ const UserForm = (props) => {
 
   // user registration or updation form
   return (
-    <Grid justifyContent="center" className="userFrom">
-      <Paper elevation={1}>
-        <Grid align="center">
-          {/* Conditional rendering if method is post h4 willbe Register else Update */}
-          <Typography variant="h4" gutterbottom className="register">
-            {props.method === "post" ? "Register" : "Update User"}
-          </Typography>
-        </Grid>
-        <Grid>
-          <form className="Form" onSubmit={handleSubmit}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={12} md={12} lg={6}>
-                <TextField
-                  fullWidth
-                  sx={{ m: 2 }}
-                  label="Name"
-                  value={values.name}
-                  name="name"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  variant="outlined"
-                />
-                <Box pl={3}>
-                  {errors.name && touched.name ? (
-                    <Typography variant="body2" color="error" gutterBottom>
-                      {errors.name}
-                    </Typography>
-                  ) : null}
-                </Box>
-              </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={6}>
-                <TextField
-                  fullWidth
-                  sx={{ m: 2 }}
-                  label="Username"
-                  value={values.username}
-                  name="username"
-                  disabled={isUsernameDisabled}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  variant="outlined"
-                />
-                <Box pl={3}>
-                  {errors.username && touched.username ? (
-                    <Typography variant="body2" color="error" gutterBottom>
-                      {errors.username}
-                    </Typography>
-                  ) : null}
-                </Box>
-              </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={6}>
-                <TextField
-                  fullWidth
-                  sx={{ m: 2 }}
-                  label="Email"
-                  type="email"
-                  value={values.email}
-                  name="email"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  variant="outlined"
-                />
-                <Box pl={3}>
-                  {errors.email && touched.email ? (
-                    <Typography variant="body2" color="error" gutterBottom>
-                      {errors.email}
-                    </Typography>
-                  ) : null}
-                </Box>
-              </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={6}>
-                <TextField
-                  fullWidth
-                  sx={{ m: 2 }}
-                  label="Phone Number"
-                  type="tel"
-                  value={values.phone}
-                  name="phone"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  variant="outlined"
-                />
-                <Box pl={3}>
-                  {errors.phone && touched.phone ? (
-                    <Typography variant="body2" color="error" gutterBottom>
-                      {errors.phone}
-                    </Typography>
-                  ) : null}
-                </Box>
-              </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={6}>
-                <TextField
-                  fullWidth
-                  select
-                  sx={{ m: 2 }}
-                  label="Designation"
-                  value={values.designation}
-                  name="designation"
-                  disabled={isDesignationDisabled}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  variant="outlined"
-                >
-                  <MenuItem value="Training_head">Training Head</MenuItem>
-                  <MenuItem value="Placement_officer">
-                    Placement Officer
-                  </MenuItem>
-                </TextField>
-                <Box pl={3}>
-                  {errors.designation && touched.designation ? (
-                    <Typography variant="body2" color="error" gutterBottom>
-                      {errors.designation}
-                    </Typography>
-                  ) : null}
-                </Box>
-              </Grid>
-              {/* conditional rendering if designation is trainer the course drop down willbe shown else batch dropdown */}
-              {values.designation === "Training_head" ? (
+    <>
+      <Grid justifyContent="center" className="userFrom">
+        <Box sx={{ paddingBottom: "25px" }}>
+          <Tooltip title="Back to Employee table" arrow>
+            <Button>
+              <SkipPreviousIcon
+                sx={{
+                  height: "50px",
+                  width: "50px",
+                  color: "#3F708D",
+                }}
+                onClick={() => {
+                  window.location.reload();
+                }}
+              />
+            </Button>
+          </Tooltip>
+        </Box>
+        <Paper elevation={1}>
+          <Grid align="center">
+            {/* Conditional rendering if method is post h4 willbe Register else Update */}
+            <Typography variant="h4" gutterbottom className="register">
+              {props.method === "post" ? "Register" : "Update User"}
+            </Typography>
+          </Grid>
+          <Grid>
+            <form className="Form" onSubmit={handleSubmit}>
+              <Grid container spacing={2}>
                 <Grid item xs={12} sm={12} md={12} lg={6}>
                   <TextField
                     fullWidth
-                    select
-                    SelectProps={{ multiple: true }}
                     sx={{ m: 2 }}
-                    label="Course"
-                    value={values.course}
-                    name="course"
+                    label="Name"
+                    value={values.name}
+                    name="name"
                     onChange={handleChange}
                     onBlur={handleBlur}
                     variant="outlined"
-                  >
-                    {courses.map((course) => (
-                      <MenuItem
-                        key={course.course_name}
-                        value={course.course_name}
-                      >
-                        {course.course_name}
-                      </MenuItem>
-                    ))}
-                  </TextField>
+                  />
                   <Box pl={3}>
-                    {errors.course && touched.course ? (
+                    {errors.name && touched.name ? (
                       <Typography variant="body2" color="error" gutterBottom>
-                        {errors.course}
+                        {errors.name}
                       </Typography>
                     ) : null}
                   </Box>
                 </Grid>
-              ) : (
                 <Grid item xs={12} sm={12} md={12} lg={6}>
                   <TextField
                     fullWidth
-                    select
-                    SelectProps={{ multiple: true }}
                     sx={{ m: 2 }}
-                    label="Batch"
-                    value={values.batch}
-                    name="batch"
+                    label="Username"
+                    value={values.username}
+                    name="username"
+                    disabled={isUsernameDisabled}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     variant="outlined"
-                  >
-                    {batches.map((batch) => (
-                      <MenuItem key={batch.batch_name} value={batch.batch_name}>
-                        {batch.batch_name}
-                      </MenuItem>
-                    ))}
-                  </TextField>
+                  />
                   <Box pl={3}>
-                    {errors.batch && touched.batch ? (
+                    {errors.username && touched.username ? (
                       <Typography variant="body2" color="error" gutterBottom>
-                        {errors.batch}
+                        {errors.username}
                       </Typography>
                     ) : null}
                   </Box>
                 </Grid>
-              )}
-              <Grid item xs={12} sm={12} md={12} lg={6}>
-                <TextField
-                  fullWidth
-                  sx={{ m: 2 }}
-                  label="Password"
-                  value={values.password}
-                  type="password"
-                  name="password"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  variant="outlined"
-                />
-                <Box pl={3}>
-                  {errors.password && touched.password ? (
-                    <Typography variant="body2" color="error" gutterBottom>
-                      {errors.password}
-                    </Typography>
-                  ) : null}
-                </Box>
-              </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={6}>
-                <TextField
-                  fullWidth
-                  sx={{ m: 2 }}
-                  label="Confirm Password"
-                  type="password"
-                  value={values.confirmpassword}
-                  name="confirmpassword"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  variant="outlined"
-                />
-                <Box pl={3}>
-                  {errors.confirmpassword && touched.confirmpassword ? (
-                    <Typography variant="body2" color="error" gutterBottom>
-                      {errors.confirmpassword}
-                    </Typography>
-                  ) : null}
-                </Box>
-              </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={6}>
-                {props.method === "post" ? (
-                  <Button
-                    sx={{ padding: "4%", marginLeft: "6%" }}
-                    type="reset"
+                <Grid item xs={12} sm={12} md={12} lg={6}>
+                  <TextField
                     fullWidth
+                    sx={{ m: 2 }}
+                    label="Email"
+                    type="email"
+                    value={values.email}
+                    name="email"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
                     variant="outlined"
-                    color="secondary"
-                    onClick={resetForm}
+                  />
+                  <Box pl={3}>
+                    {errors.email && touched.email ? (
+                      <Typography variant="body2" color="error" gutterBottom>
+                        {errors.email}
+                      </Typography>
+                    ) : null}
+                  </Box>
+                </Grid>
+                <Grid item xs={12} sm={12} md={12} lg={6}>
+                  <TextField
+                    fullWidth
+                    sx={{ m: 2 }}
+                    label="Phone Number"
+                    type="tel"
+                    value={values.phone}
+                    name="phone"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    variant="outlined"
+                  />
+                  <Box pl={3}>
+                    {errors.phone && touched.phone ? (
+                      <Typography variant="body2" color="error" gutterBottom>
+                        {errors.phone}
+                      </Typography>
+                    ) : null}
+                  </Box>
+                </Grid>
+                <Grid item xs={12} sm={12} md={12} lg={6}>
+                  <TextField
+                    fullWidth
+                    select
+                    sx={{ m: 2 }}
+                    label="Designation"
+                    value={values.designation}
+                    name="designation"
+                    disabled={isDesignationDisabled}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    variant="outlined"
                   >
-                    Reset
-                  </Button>
+                    <MenuItem value="Training_head">Training Head</MenuItem>
+                    <MenuItem value="Placement_officer">
+                      Placement Officer
+                    </MenuItem>
+                  </TextField>
+                  <Box pl={3}>
+                    {errors.designation && touched.designation ? (
+                      <Typography variant="body2" color="error" gutterBottom>
+                        {errors.designation}
+                      </Typography>
+                    ) : null}
+                  </Box>
+                </Grid>
+                {/* conditional rendering if designation is trainer the course drop down willbe shown else batch dropdown */}
+                {values.designation === "Training_head" ? (
+                  <Grid item xs={12} sm={12} md={12} lg={6}>
+                    <TextField
+                      fullWidth
+                      select
+                      SelectProps={{ multiple: true }}
+                      sx={{ m: 2 }}
+                      label="Course"
+                      value={values.course}
+                      name="course"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      variant="outlined"
+                    >
+                      {courses.map((course) => (
+                        <MenuItem
+                          key={course.course_name}
+                          value={course.course_name}
+                        >
+                          {course.course_name}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                    <Box pl={3}>
+                      {errors.course && touched.course ? (
+                        <Typography variant="body2" color="error" gutterBottom>
+                          {errors.course}
+                        </Typography>
+                      ) : null}
+                    </Box>
+                  </Grid>
                 ) : (
-                  <Button
-                    sx={{ padding: "4%", marginLeft: "6%" }}
-                    type="reset"
-                    fullWidth
-                    variant="outlined"
-                    color="secondary"
-                    onClick={() => {
-                      window.location.reload();
-                    }}
-                  >
-                    Cancel
-                  </Button>
+                  <Grid item xs={12} sm={12} md={12} lg={6}>
+                    <TextField
+                      fullWidth
+                      select
+                      SelectProps={{ multiple: true }}
+                      sx={{ m: 2 }}
+                      label="Batch"
+                      value={values.batch}
+                      name="batch"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      variant="outlined"
+                    >
+                      {batches.map((batch) => (
+                        <MenuItem
+                          key={batch.batch_name}
+                          value={batch.batch_name}
+                        >
+                          {batch.batch_name}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                    <Box pl={3}>
+                      {errors.batch && touched.batch ? (
+                        <Typography variant="body2" color="error" gutterBottom>
+                          {errors.batch}
+                        </Typography>
+                      ) : null}
+                    </Box>
+                  </Grid>
                 )}
+                <Grid item xs={12} sm={12} md={12} lg={6}>
+                  <TextField
+                    fullWidth
+                    sx={{ m: 2 }}
+                    label="Password"
+                    value={values.password}
+                    type="password"
+                    name="password"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    variant="outlined"
+                  />
+                  <Box pl={3}>
+                    {errors.password && touched.password ? (
+                      <Typography variant="body2" color="error" gutterBottom>
+                        {errors.password}
+                      </Typography>
+                    ) : null}
+                  </Box>
+                </Grid>
+                <Grid item xs={12} sm={12} md={12} lg={6}>
+                  <TextField
+                    fullWidth
+                    sx={{ m: 2 }}
+                    label="Confirm Password"
+                    type="password"
+                    value={values.confirmpassword}
+                    name="confirmpassword"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    variant="outlined"
+                  />
+                  <Box pl={3}>
+                    {errors.confirmpassword && touched.confirmpassword ? (
+                      <Typography variant="body2" color="error" gutterBottom>
+                        {errors.confirmpassword}
+                      </Typography>
+                    ) : null}
+                  </Box>
+                </Grid>
+                <Grid item xs={12} sm={12} md={12} lg={6}>
+                  {props.method === "post" ? (
+                    <Button
+                      sx={{ padding: "4%", marginLeft: "6%" }}
+                      type="reset"
+                      fullWidth
+                      variant="outlined"
+                      color="secondary"
+                      onClick={resetForm}
+                    >
+                      Reset
+                    </Button>
+                  ) : (
+                    <Button
+                      sx={{ padding: "4%", marginLeft: "6%" }}
+                      type="reset"
+                      fullWidth
+                      variant="outlined"
+                      color="secondary"
+                      onClick={() => {
+                        window.location.reload();
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  )}
+                </Grid>
+                <Grid item xs={12} sm={12} md={12} lg={6}>
+                  <Button
+                    type="submit"
+                    sx={{ padding: "4%", marginLeft: "6%", marginBottom: "6%" }}
+                    fullWidth
+                    variant="contained"
+                    color="secondary"
+                  >
+                    {props.method === "post" ? "Register" : "Update"}
+                  </Button>
+                </Grid>
               </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={6}>
-                <Button
-                  type="submit"
-                  sx={{ padding: "4%", marginLeft: "6%", marginBottom: "6%" }}
-                  fullWidth
-                  variant="contained"
-                  color="secondary"
-                >
-                  {props.method === "post" ? "Register" : "Update"}
-                </Button>
-              </Grid>
-            </Grid>
-          </form>
-        </Grid>
-      </Paper>
-    </Grid>
+            </form>
+          </Grid>
+        </Paper>
+      </Grid>
+    </>
   );
 };
 

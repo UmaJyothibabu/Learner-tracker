@@ -14,7 +14,9 @@ function App() {
       <Route path="/" element={<Login />} />
       <Route path="/userinfo" element={<UserList />} />
       <Route path="/studentTable" element={<StudentTable />} />
-      <Route
+      <Route path="/courseinfo" element={<CourseDetails />} />
+      {/* You can find  Userform and StudentForm inside UserList and StudentTabled used as components */}
+      {/* <Route
         path="/userform"
         element={
           <UserForm
@@ -32,9 +34,8 @@ function App() {
             }}
           />
         }
-      />
-      <Route path="/courseinfo" element={<CourseDetails />} />
-      <Route
+      /> */}
+      {/* <Route
         path="/studentform"
         element={
           <StudentForm
@@ -60,7 +61,9 @@ function App() {
           />
         }
       />
-      <Route path="/bulkupload" element={<BulkUpload />} /> {/* Add BulkUpload component route */}
+      */}
+      <Route path="/bulkupload" element={<BulkUpload />} />
+      {/* Add BulkUpload component route */}
     </Routes>
   );
 }

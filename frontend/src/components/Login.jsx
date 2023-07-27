@@ -40,7 +40,7 @@ const Login = () => {
               alert(response.data.message);
               if (role === "Admin") navigate("/userinfo");
               else {
-                navigate("/studentform");
+                navigate("/studentTable");
               }
             } else {
               alert("Invalid credentials");
