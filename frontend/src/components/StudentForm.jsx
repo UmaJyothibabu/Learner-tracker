@@ -12,6 +12,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import "../Style/Studentform.css";
 import SkipPreviousIcon from "@mui/icons-material/SkipPrevious";
 import StudentFormSchema from "../Schema/StudentFormSchema"; // Import the form validation schema
 
@@ -84,6 +85,8 @@ const StudentForm = (props) => {
     handleSubmit,
     handleChange,
     handleReset,
+    handleBlur,
+    touched,
     isSubmitting,
     errors,
   } = useFormik({
@@ -147,84 +150,107 @@ const StudentForm = (props) => {
 
   return (
     <Grid justifyContent="center" className="studentForm">
-      <Box sx={{ paddingBottom: "25px" }}>
-        <Tooltip title="Back to Student table" arrow>
-          <Button>
-            <SkipPreviousIcon
-              sx={{
-                height: "50px",
-                width: "50px",
-                color: "#3F708D",
-              }}
-              onClick={() => {
-                window.location.reload();
-              }}
-            />
-          </Button>
-        </Tooltip>
-      </Box>
       <Paper elevation={1}>
-        <Grid align="center">
-          <Typography variant="h4" gutterBottom className="register">
-            {props.method === "post" ? "Register Student" : "Update Student"}
-          </Typography>
+        {/* <Box sx={{ paddingBottom: "25px" }}> */}
+        <Grid container>
+          <Grid item xs={12} sm={12} md={6} lg={4}>
+            <Tooltip title="Back to Student table" arrow>
+              <Button>
+                <SkipPreviousIcon
+                  sx={{
+                    height: "50px",
+                    width: "50px",
+                    color: "#3F708D",
+                  }}
+                  onClick={() => {
+                    window.location.reload();
+                  }}
+                />
+              </Button>
+            </Tooltip>
+          </Grid>
+          <Grid item xs={12} sm={12} md={6} lg={8}>
+            <Typography
+              variant="h4"
+              gutterBottom
+              className="register"
+              // align="center"
+              sx={{ fontFamily: "Noto Serif, serif" }}
+            >
+              {props.method === "post" ? "Register Student" : "Update Student"}
+            </Typography>
+          </Grid>
         </Grid>
+        {/* </Box> */}
         <Grid>
           <form className="Form" onSubmit={handleSubmit}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={12} md={6} lg={6}>
                 <TextField
                   fullWidth
-                  sx={{ m: 2 }}
                   label="Student Name"
                   value={values.student_name}
                   name="student_name"
                   variant="outlined"
                   onChange={handleChange}
-                  error={Boolean(errors.student_name)}
-                  helperText={errors.student_name}
+                  onBlur={handleBlur}
                 />
+                <Box pl={3}>
+                  {errors.student_name && touched.student_name ? (
+                    <Typography variant="body2" color="error" gutterBottom>
+                      {errors.student_name}
+                    </Typography>
+                  ) : null}
+                </Box>
               </Grid>
               <Grid item xs={12} sm={12} md={6} lg={6}>
                 <TextField
                   fullWidth
-                  sx={{ m: 2 }}
                   label="Email"
                   type="email"
                   value={values.email_id}
                   name="email_id"
                   variant="outlined"
                   onChange={handleChange}
-                  error={Boolean(errors.email_id)}
-                  helperText={errors.email_id}
+                  onBlur={handleBlur}
                 />
+                <Box pl={3}>
+                  {errors.email_id && touched.email_id ? (
+                    <Typography variant="body2" color="error" gutterBottom>
+                      {errors.email_id}
+                    </Typography>
+                  ) : null}
+                </Box>
               </Grid>
-              <Grid item xs={12} sm={12} md={6} lg={6}>
+              <Grid item xs={12} sm={12} md={6} lg={4}>
                 <TextField
                   fullWidth
-                  sx={{ m: 2 }}
                   label="Phone Number"
                   type="tel"
                   value={values.phone}
                   name="phone"
                   variant="outlined"
                   onChange={handleChange}
-                  error={Boolean(errors.phone)}
-                  helperText={errors.phone}
+                  onBlur={handleBlur}
                 />
+                <Box pl={3}>
+                  {errors.phone && touched.phone ? (
+                    <Typography variant="body2" color="error" gutterBottom>
+                      {errors.phone}
+                    </Typography>
+                  ) : null}
+                </Box>
               </Grid>
-              <Grid item xs={12} sm={12} md={6} lg={6}>
+              <Grid item xs={12} sm={12} md={6} lg={4}>
                 <TextField
                   fullWidth
-                  sx={{ m: 2 }}
                   select
                   label="Course"
                   value={values.course}
                   name="course"
                   variant="outlined"
                   onChange={handleChange}
-                  error={Boolean(errors.course)}
-                  helperText={errors.course}
+                  onBlur={handleBlur}
                 >
                   {courses.map((course) => (
                     <MenuItem key={course._id} value={course.course_name}>
@@ -232,19 +258,24 @@ const StudentForm = (props) => {
                     </MenuItem>
                   ))}
                 </TextField>
+                <Box pl={3}>
+                  {errors.course && touched.course ? (
+                    <Typography variant="body2" color="error" gutterBottom>
+                      {errors.course}
+                    </Typography>
+                  ) : null}
+                </Box>
               </Grid>
-              <Grid item xs={12} sm={12} md={6} lg={6}>
+              <Grid item xs={12} sm={12} md={6} lg={4}>
                 <TextField
                   fullWidth
-                  sx={{ m: 2 }}
                   select
                   label="Batch"
                   value={values.batch}
                   name="batch"
                   variant="outlined"
                   onChange={handleChange}
-                  error={Boolean(errors.batch)}
-                  helperText={errors.batch}
+                  onBlur={handleBlur}
                 >
                   {batches.map((batch) => (
                     <MenuItem key={batch._id} value={batch.batch_name}>
@@ -252,19 +283,24 @@ const StudentForm = (props) => {
                     </MenuItem>
                   ))}
                 </TextField>
+                <Box pl={3}>
+                  {errors.batch && touched.batch ? (
+                    <Typography variant="body2" color="error" gutterBottom>
+                      {errors.batch}
+                    </Typography>
+                  ) : null}
+                </Box>
               </Grid>
-              <Grid item xs={12} sm={12} md={6} lg={6}>
+              <Grid item xs={12} sm={12} md={6} lg={4}>
                 <TextField
                   fullWidth
-                  sx={{ m: 2 }}
                   select
                   label="Project"
                   value={values.project}
                   name="project"
                   variant="outlined"
                   onChange={handleChange}
-                  error={Boolean(errors.project)}
-                  helperText={errors.project}
+                  onBlur={handleBlur}
                 >
                   {projects.map((project) => (
                     <MenuItem key={project._id} value={project.project_name}>
@@ -272,54 +308,69 @@ const StudentForm = (props) => {
                     </MenuItem>
                   ))}
                 </TextField>
+                <Box pl={3}>
+                  {errors.project && touched.project ? (
+                    <Typography variant="body2" color="error" gutterBottom>
+                      {errors.project}
+                    </Typography>
+                  ) : null}
+                </Box>
               </Grid>
-              <Grid item xs={12} sm={12} md={6} lg={6}>
+              <Grid item xs={12} sm={12} md={6} lg={4}>
                 <TextField
                   fullWidth
-                  sx={{ m: 2 }}
                   select
                   label="Course Status"
                   value={values.course_status}
                   name="course_status"
                   variant="outlined"
                   onChange={handleChange}
-                  error={Boolean(errors.course_status)}
-                  helperText={errors.course_status}
+                  onBlur={handleBlur}
                 >
                   <MenuItem value="Qualified">Qualified</MenuItem>
                   <MenuItem value="Incompetent">Incompetent</MenuItem>
                 </TextField>
+                <Box pl={3}>
+                  {errors.course_status && touched.course_status ? (
+                    <Typography variant="body2" color="error" gutterBottom>
+                      {errors.course_status}
+                    </Typography>
+                  ) : null}
+                </Box>
               </Grid>
-              <Grid item xs={12} sm={12} md={6} lg={6}>
+              <Grid item xs={12} sm={12} md={6} lg={4}>
                 <TextField
                   fullWidth
-                  sx={{ m: 2 }}
                   select
                   label="Placement Status"
                   value={values.placement_status}
                   name="placement_status"
                   variant="outlined"
                   onChange={handleChange}
-                  error={Boolean(errors.placement_status)}
-                  helperText={errors.placement_status}
+                  onBlur={handleBlur}
                 >
                   <MenuItem value="Placed">Placed</MenuItem>
                   <MenuItem value="Job Seeking">Job Seeking</MenuItem>
                   <MenuItem value="Not interested">Not Interested</MenuItem>
                 </TextField>
+                <Box pl={3}>
+                  {errors.placement_status && touched.placement_status ? (
+                    <Typography variant="body2" color="error" gutterBottom>
+                      {errors.placement_status}
+                    </Typography>
+                  ) : null}
+                </Box>
               </Grid>
               <Grid item xs={12} sm={12} md={6} lg={6}>
                 <TextField
                   fullWidth
-                  sx={{ m: 2 }}
                   select
                   label="Training Head"
                   value={values.training_head}
                   name="training_head"
                   variant="outlined"
                   onChange={handleChange}
-                  error={Boolean(errors.training_head)}
-                  helperText={errors.training_head}
+                  onBlur={handleBlur}
                 >
                   {trainingHeads.map((thead) => (
                     <MenuItem key={thead.name} value={thead.username}>
@@ -327,19 +378,24 @@ const StudentForm = (props) => {
                     </MenuItem>
                   ))}
                 </TextField>
+                <Box pl={3}>
+                  {errors.training_head && touched.training_head ? (
+                    <Typography variant="body2" color="error" gutterBottom>
+                      {errors.training_head}
+                    </Typography>
+                  ) : null}
+                </Box>
               </Grid>
               <Grid item xs={12} sm={12} md={6} lg={6}>
                 <TextField
                   fullWidth
-                  sx={{ m: 2 }}
                   select
                   label="Placement Officer"
                   value={values.placement_officer}
                   name="placement_officer"
                   variant="outlined"
                   onChange={handleChange}
-                  error={Boolean(errors.placement_officer)}
-                  helperText={errors.placement_officer}
+                  onBlur={handleBlur}
                 >
                   {placemenOfficers.map((pofficer) => {
                     const batches = pofficer.batch.filter(
@@ -353,59 +409,91 @@ const StudentForm = (props) => {
                       );
                   })}
                 </TextField>
+                <Box pl={3}>
+                  {errors.placement_officer && touched.placement_officer ? (
+                    <Typography variant="body2" color="error" gutterBottom>
+                      {errors.placement_officer}
+                    </Typography>
+                  ) : null}
+                </Box>
               </Grid>
               <Grid item xs={12} sm={12} md={6} lg={6}>
                 <TextField
                   fullWidth
-                  sx={{ m: 2 }}
                   label="Address"
                   value={values.student_address.address}
                   name="student_address.address"
                   variant="outlined"
                   onChange={handleChange}
-                  error={Boolean(errors.student_address?.address)}
-                  helperText={errors.student_address?.address}
+                  onBlur={handleBlur}
                 />
+                <Box pl={3}>
+                  {errors.student_address?.address &&
+                  touched.student_address?.address ? (
+                    <Typography variant="body2" color="error" gutterBottom>
+                      {errors.student_address?.address}
+                    </Typography>
+                  ) : null}
+                </Box>
               </Grid>
+
               <Grid item xs={12} sm={12} md={6} lg={6}>
                 <TextField
                   fullWidth
-                  sx={{ m: 2 }}
                   label="District"
                   value={values.student_address.district}
                   name="student_address.district"
                   variant="outlined"
                   onChange={handleChange}
-                  error={Boolean(errors.student_address?.district)}
-                  helperText={errors.student_address?.district}
+                  onBlur={handleBlur}
                 />
+                <Box pl={3}>
+                  {errors.student_address?.district &&
+                  touched.student_address?.district ? (
+                    <Typography variant="body2" color="error" gutterBottom>
+                      {errors.student_address?.district}
+                    </Typography>
+                  ) : null}
+                </Box>
               </Grid>
               <Grid item xs={12} sm={12} md={6} lg={6}>
                 <TextField
                   fullWidth
-                  sx={{ m: 2 }}
                   label="State"
                   value={values.student_address.state}
                   name="student_address.state"
                   variant="outlined"
                   onChange={handleChange}
-                  error={Boolean(errors.student_address?.state)}
-                  helperText={errors.student_address?.state}
+                  onBlur={handleBlur}
                 />
+                <Box pl={3}>
+                  {errors.student_address?.state &&
+                  touched.student_address?.state ? (
+                    <Typography variant="body2" color="error" gutterBottom>
+                      {errors.student_address?.state}
+                    </Typography>
+                  ) : null}
+                </Box>
               </Grid>
               <Grid item xs={12} sm={12} md={6} lg={6}>
                 <TextField
                   fullWidth
-                  sx={{ m: 2 }}
                   label="Pin"
-                  type="number"
+                  type="text"
                   value={values.student_address.pin}
                   name="student_address.pin"
                   variant="outlined"
                   onChange={handleChange}
-                  error={Boolean(errors.student_address?.pin)}
-                  helperText={errors.student_address?.pin}
+                  onBlur={handleBlur}
                 />
+                <Box pl={3}>
+                  {errors.student_address?.pin &&
+                  touched.student_address?.pin ? (
+                    <Typography variant="body2" color="error" gutterBottom>
+                      {errors.student_address?.pin}
+                    </Typography>
+                  ) : null}
+                </Box>
               </Grid>
 
               {/* Buttons */}
@@ -415,7 +503,11 @@ const StudentForm = (props) => {
                   fullWidth
                   variant="contained"
                   color="primary"
-                  // sx={{ padding: "4%", width: "70%" }}
+                  sx={{
+                    padding: "2%",
+                    marginBottom: "6%",
+                    backgroundColor: "#3F708D",
+                  }}
                   disabled={isSubmitting}
                 >
                   {props.method === "post"
@@ -429,7 +521,11 @@ const StudentForm = (props) => {
                   fullWidth
                   variant="contained"
                   color="secondary"
-                  sx={{ padding: "2%", marginLeft: "6%", marginBottom: "6%" }}
+                  sx={{
+                    padding: "2%",
+                    marginBottom: "6%",
+                    backgroundColor: "#3F708D",
+                  }}
                   onClick={handleReset}
                   disabled={isSubmitting}
                 >

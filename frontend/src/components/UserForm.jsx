@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Grid,
+  Hidden,
   MenuItem,
   Paper,
   TextField,
@@ -35,8 +36,8 @@ const UserForm = (props) => {
   };
 
   // if (props.method === "put") setIsDisabled(true);
-  const isUsernameDisabled = props.method === "put";
-  const isDesignationDisabled = props.method === "put";
+  const isUsernameDisabled = props.method === "PUT";
+  const isDesignationDisabled = props.method === "PUT";
   const endPoints = [
     "http://localhost:8000/api/course",
     "http://localhost:8000/api/batch",
@@ -68,16 +69,17 @@ const UserForm = (props) => {
     handleChange,
     resetForm,
   } = useFormik({
-    initialValues: props.data,
+    initialValues: { ...props.data, password: "" },
     validationSchema: UserFormSchema,
     onSubmit: (values) => {
+      console.log(values);
       // console.log(values);
       // ***********************************
       // include userid and role with values once authorization is done
       // this code is without authorization remember to update
       // remember to use axios headers to pass token
       // ***********************************
-      if (props.method === "post") {
+      if (props.method === "POST") {
         axios
           .post("http://localhost:8000/api/user", values, config)
           .then((response) => {
@@ -95,7 +97,7 @@ const UserForm = (props) => {
             window.location.reload();
           });
       }
-      if (props.method === "put") {
+      if (props.method === "PUT") {
         console.log("insideput");
         axios
           .put(`http://localhost:8000/api/user/${values._id}`, values, config)
@@ -120,29 +122,38 @@ const UserForm = (props) => {
   // user registration or updation form
   return (
     <>
-      <Grid justifyContent="center" className="userFrom">
-        <Box sx={{ paddingBottom: "25px" }}>
-          <Tooltip title="Back to Employee table" arrow>
-            <Button>
-              <SkipPreviousIcon
-                sx={{
-                  height: "50px",
-                  width: "50px",
-                  color: "#3F708D",
-                }}
-                onClick={() => {
-                  window.location.reload();
-                }}
-              />
-            </Button>
-          </Tooltip>
-        </Box>
+      <Grid justifyContent="center" className="userFrom" overflow="hidden">
         <Paper elevation={1}>
-          <Grid align="center">
-            {/* Conditional rendering if method is post h4 willbe Register else Update */}
-            <Typography variant="h4" gutterbottom className="register">
-              {props.method === "post" ? "Register" : "Update User"}
-            </Typography>
+          <Grid container align="center">
+            <Grid item xs={12} sm={12} md={6} lg={1}>
+              <Box sx={{ paddingBottom: "25px" }}>
+                <Tooltip title="Back to Employee table" arrow>
+                  <Button>
+                    <SkipPreviousIcon
+                      sx={{
+                        height: "50px",
+                        width: "50px",
+                        color: "#3F708D",
+                      }}
+                      onClick={() => {
+                        window.location.reload();
+                      }}
+                    />
+                  </Button>
+                </Tooltip>
+              </Box>
+            </Grid>
+            <Grid item xs={12} sm={12} md={6} lg={11}>
+              {/* Conditional rendering if method is post h4 willbe Register else Update */}
+              <Typography
+                variant="h4"
+                gutterbottom
+                className="register"
+                sx={{ fontFamily: "Noto Serif, serif" }}
+              >
+                {props.method === "POST" ? "Register" : "Update User"}
+              </Typography>
+            </Grid>
           </Grid>
           <Grid>
             <form className="Form" onSubmit={handleSubmit}>
@@ -150,7 +161,7 @@ const UserForm = (props) => {
                 <Grid item xs={12} sm={12} md={12} lg={6}>
                   <TextField
                     fullWidth
-                    sx={{ m: 2 }}
+                    sx={{ m: 1 }}
                     label="Name"
                     value={values.name}
                     name="name"
@@ -169,7 +180,7 @@ const UserForm = (props) => {
                 <Grid item xs={12} sm={12} md={12} lg={6}>
                   <TextField
                     fullWidth
-                    sx={{ m: 2 }}
+                    sx={{ m: 1 }}
                     label="Username"
                     value={values.username}
                     name="username"
@@ -189,7 +200,7 @@ const UserForm = (props) => {
                 <Grid item xs={12} sm={12} md={12} lg={6}>
                   <TextField
                     fullWidth
-                    sx={{ m: 2 }}
+                    sx={{ m: 1 }}
                     label="Email"
                     type="email"
                     value={values.email}
@@ -209,7 +220,7 @@ const UserForm = (props) => {
                 <Grid item xs={12} sm={12} md={12} lg={6}>
                   <TextField
                     fullWidth
-                    sx={{ m: 2 }}
+                    sx={{ m: 1 }}
                     label="Phone Number"
                     type="tel"
                     value={values.phone}
@@ -230,7 +241,7 @@ const UserForm = (props) => {
                   <TextField
                     fullWidth
                     select
-                    sx={{ m: 2 }}
+                    sx={{ m: 1 }}
                     label="Designation"
                     value={values.designation}
                     name="designation"
@@ -259,7 +270,7 @@ const UserForm = (props) => {
                       fullWidth
                       select
                       SelectProps={{ multiple: true }}
-                      sx={{ m: 2 }}
+                      sx={{ m: 1 }}
                       label="Course"
                       value={values.course}
                       name="course"
@@ -290,7 +301,7 @@ const UserForm = (props) => {
                       fullWidth
                       select
                       SelectProps={{ multiple: true }}
-                      sx={{ m: 2 }}
+                      sx={{ m: 1 }}
                       label="Batch"
                       value={values.batch}
                       name="batch"
@@ -316,10 +327,11 @@ const UserForm = (props) => {
                     </Box>
                   </Grid>
                 )}
+
                 <Grid item xs={12} sm={12} md={12} lg={6}>
                   <TextField
                     fullWidth
-                    sx={{ m: 2 }}
+                    sx={{ m: 1 }}
                     label="Password"
                     value={values.password}
                     type="password"
@@ -339,7 +351,7 @@ const UserForm = (props) => {
                 <Grid item xs={12} sm={12} md={12} lg={6}>
                   <TextField
                     fullWidth
-                    sx={{ m: 2 }}
+                    sx={{ m: 1 }}
                     label="Confirm Password"
                     type="password"
                     value={values.confirmpassword}
@@ -356,21 +368,32 @@ const UserForm = (props) => {
                     ) : null}
                   </Box>
                 </Grid>
+
                 <Grid item xs={12} sm={12} md={12} lg={6}>
-                  {props.method === "post" ? (
+                  {props.method === "POST" ? (
                     <Button
-                      sx={{ padding: "4%", marginLeft: "6%" }}
+                      sx={{
+                        padding: "4%",
+                        marginLeft: "2%",
+                        color: "#3F708D",
+                        fontWeight: "bold",
+                      }}
                       type="reset"
                       fullWidth
                       variant="outlined"
-                      color="secondary"
+                      // color="secondary"
                       onClick={resetForm}
                     >
                       Reset
                     </Button>
                   ) : (
                     <Button
-                      sx={{ padding: "4%", marginLeft: "6%" }}
+                      sx={{
+                        padding: "4%",
+                        marginLeft: "2%",
+                        color: "#3F708D",
+                        fontWeight: "bold",
+                      }}
                       type="reset"
                       fullWidth
                       variant="outlined"
@@ -386,12 +409,17 @@ const UserForm = (props) => {
                 <Grid item xs={12} sm={12} md={12} lg={6}>
                   <Button
                     type="submit"
-                    sx={{ padding: "4%", marginLeft: "6%", marginBottom: "6%" }}
+                    sx={{
+                      padding: "4%",
+                      marginLeft: "2%",
+                      marginBottom: "6%",
+                      backgroundColor: "#3F708D",
+                    }}
                     fullWidth
                     variant="contained"
                     color="secondary"
                   >
-                    {props.method === "post" ? "Register" : "Update"}
+                    {props.method === "POST" ? "Register" : "Update"}
                   </Button>
                 </Grid>
               </Grid>

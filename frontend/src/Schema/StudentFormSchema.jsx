@@ -20,7 +20,9 @@ const StudentFormSchema = Yup.object().shape({
     address: Yup.string().required("Address is required"),
     district: Yup.string().required("District is required"),
     state: Yup.string().required("State is required"),
-    pin: Yup.number().required("Pin is required"),
+    pin: Yup.string()
+      .matches(/^\b\d{6}\b$/, "Invalid pin format")
+      .required("Pin is required"),
   }),
 });
 

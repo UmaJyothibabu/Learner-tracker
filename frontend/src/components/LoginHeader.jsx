@@ -12,7 +12,7 @@ import logo from "../images/logosmall.png";
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#5691B3",
+      main: "#11425f",
     },
   },
 });
@@ -30,7 +30,7 @@ const LoginHeader = () => {
               variant="h5"
               fontWeight="bold"
               component="div"
-              sx={{ flexGrow: 1 }}
+              sx={{ flexGrow: 1, fontFamily: "Noto Serif, serif" }}
             >
               ICTAK LEARNER TRACKER
             </Typography>

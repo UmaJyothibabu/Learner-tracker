@@ -7,14 +7,15 @@ import Login from "./components/Login";
 import CourseDetails from "./components/CourseDetails";
 import StudentTable from "./components/StudentTable";
 import BulkUpload from "./components/BulkUpload"; // Import the BulkUpload component
+import Main from "./components/Main";
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Login />} />
-      <Route path="/userinfo" element={<UserList />} />
-      <Route path="/studentTable" element={<StudentTable />} />
-      <Route path="/courseinfo" element={<CourseDetails />} />
+      <Route path="/userinfo" element={<Main child={<UserList />} />} />
+      <Route path="/studentTable" element={<Main child={<StudentTable />} />} />
+      <Route path="/courseinfo" element={<Main child={<CourseDetails />} />} />
       {/* You can find  Userform and StudentForm inside UserList and StudentTabled used as components */}
       {/* <Route
         path="/userform"
@@ -62,7 +63,7 @@ function App() {
         }
       />
       */}
-      <Route path="/bulkupload" element={<BulkUpload />} />
+      <Route path="/bulkupload" element={<Main child={<BulkUpload />} />} />
       {/* Add BulkUpload component route */}
     </Routes>
   );

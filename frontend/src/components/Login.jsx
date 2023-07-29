@@ -52,39 +52,6 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   console.log(formErrors);
-  //   console.log(errorMessage);
-  //   if (
-  //     Object.keys(formErrors).length === 0 &&
-  //     isSubmit &&
-  //     user.username !== "" &&
-  //     user.password !== ""
-  //   ) {
-  //     console.log("Login successfully");
-  //     axios.post("/api/login", user).then((response) => {
-  //       if (response.data.message === "Login Successfully") {
-  //         const token = response.data.token;
-  //         const userid = response.data.data._id;
-  //         const role = response.data.data.role;
-  //         console.log(token);
-  //         console.log(userid);
-  //         console.log(role);
-  //         sessionStorage.setItem("userToken", token);
-  //         sessionStorage.setItem("userId", userid);
-  //         sessionStorage.setItem("role", role);
-  //         alert(response.data.message);
-  //         navigate("/list");
-  //       } else {
-  //         alert("Invalid credentials");
-  //         window.location.reload();
-  //       }
-  //     });
-  //   }
-
-  //   // navigate("/employee");
-  // }, [formErrors]);
-
   const theme = createTheme({
     typography: {
       fontFamily: ["Roboto Slab", "serif"].join(","),
@@ -109,7 +76,11 @@ const Login = () => {
                       className="Header"
                       variant="h4"
                       gutterBottom
-                      sx={{ fontWeight: "bold", color: "#ffffff" }}
+                      sx={{
+                        // fontWeight: "bold",
+                        color: "#ffffff",
+                        fontFamily: "Noto Serif, serif",
+                      }}
                     >
                       Login
                     </Typography>
@@ -170,7 +141,11 @@ const Login = () => {
                     </Box>
 
                     <Button
-                      sx={{ padding: "3%", marginLeft: "3.5%" }}
+                      sx={{
+                        padding: "2%",
+                        marginLeft: "3.5%",
+                        fontSize: "1.2em",
+                      }}
                       className="login"
                       fullWidth
                       type="submit"
@@ -180,11 +155,6 @@ const Login = () => {
                       Login
                     </Button>
                   </form>
-                  <Grid sx={{ marginTop: "20px" }} align="center">
-                    <Link to="/signup" className="createlink">
-                      Do not have an account? Click here
-                    </Link>
-                  </Grid>
                 </Grid>
               </Paper>
             </Card>

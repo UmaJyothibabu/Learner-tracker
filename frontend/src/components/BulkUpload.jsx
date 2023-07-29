@@ -17,6 +17,18 @@ const BulkUpload = () => {
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
+  const [userToken, setUserToken] = useState(
+    sessionStorage.getItem("userToken")
+  );
+
+  const [userRole, setUserRole] = useState(sessionStorage.getItem("role"));
+  const [username, setUsername] = useState(sessionStorage.getItem("username"));
+  const config = {
+    headers: {
+      authorization: " Bearer " + userToken,
+    },
+  };
+
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
@@ -35,7 +47,7 @@ const BulkUpload = () => {
     formData.append("csvFile", file); // Make sure the key matches the backend field name
 
     axios
-      .post("http://localhost:8000/api/bulk-upload", formData)
+      .post("http://localhost:8000/api/bulk-upload", formData, config)
       .then((response) => {
         setLoading(false);
         setSuccessMessage(response.data.message);
@@ -48,7 +60,12 @@ const BulkUpload = () => {
   };
 
   return (
-    <Grid container justifyContent="center" alignItems="center" style={{ height: "100vh" }}>
+    <Grid
+      container
+      justifyContent="center"
+      alignItems="center"
+      style={{ height: "100vh" }}
+    >
       <Grid item xs={12} sm={10} md={8} lg={6}>
         <Paper
           elevation={3}
@@ -59,8 +76,12 @@ const BulkUpload = () => {
             alignItems: "center",
           }}
         >
-          <Typography variant="h5" gutterBottom>
-            Bulk Upload Students
+          <Typography
+            variant="h5"
+            gutterBottom
+            sx={{ color: "#11425f", fontFamily: "Noto Serif, serif" }}
+          >
+            BULK UPLOAD STUDENTS
           </Typography>
           <input
             type="file"
@@ -79,6 +100,7 @@ const BulkUpload = () => {
               Choose File
             </Button>
           </label>
+          <br />
           {file && <Typography variant="body1">{file.name}</Typography>}
           {error && (
             <Typography variant="body1" color="error" gutterBottom>
@@ -97,10 +119,11 @@ const BulkUpload = () => {
               Upload
             </Button>
           )}
+          <br />
           <Button
             variant="contained"
             onClick={() => {
-              navigate("/student-list");
+              navigate("/studentTable");
             }}
           >
             Back to Student List

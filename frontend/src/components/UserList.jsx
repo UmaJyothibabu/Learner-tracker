@@ -15,6 +15,7 @@ import {
   createTheme,
   Tooltip,
   Box,
+  Typography,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UpdateIcon from "@mui/icons-material/Update";
@@ -104,9 +105,9 @@ const UserList = () => {
     <Grid
       container
       overflow="hidden"
-      // justifyContent="center"
+      justifyContent="center"
       alignItems="center"
-      style={{ height: "100vh" }}
+      style={{ height: "95.5vh", marginTop: "30px" }}
     >
       <Grid item xs={1} sm={1} md={1} lg={1}></Grid>
       <Grid item xs={11} sm={11} md={11} lg={11}>
@@ -121,7 +122,7 @@ const UserList = () => {
               <UserForm
                 userToken={userToken}
                 userRole={userRole}
-                method="post"
+                method="POST"
                 data={{
                   name: "",
                   username: "",
@@ -137,19 +138,6 @@ const UserList = () => {
             )}
             {!add && (
               <>
-                <Box align="right" sx={{ marginRight: "20px" }} gutterbottom>
-                  <Tooltip title="Add" arrow>
-                    <PersonAddIcon
-                      sx={{
-                        height: "50px",
-                        width: "50px",
-                        color: "#3F708D",
-                      }}
-                      onClick={handleAddition}
-                    />
-                  </Tooltip>
-                </Box>
-
                 <Paper
                   sx={{
                     width: "98.5%",
@@ -158,9 +146,36 @@ const UserList = () => {
                     marginRight: "10px",
                   }}
                 >
-                  <h2 className="App fw-bold py-4 fst-italic">
-                    Facuilty Details
-                  </h2>
+                  <Box align="right" sx={{ marginRight: "20px" }}>
+                    <Grid container>
+                      <Grid item xs={11} sm={11} md={11} lg={11}>
+                        <Typography
+                          variant="h4"
+                          align="center"
+                          sx={{
+                            color: "#11425f",
+                            fontStyle: "italic",
+                            padding: "20px 0",
+                            fontFamily: "Noto Serif, serif",
+                          }}
+                        >
+                          FACULTY DETAILS
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={1} sm={1} md={1} lg={1}>
+                        <Tooltip title="Add" arrow>
+                          <PersonAddIcon
+                            sx={{
+                              height: "40px",
+                              width: "40px",
+                              color: "#3F708D",
+                            }}
+                            onClick={handleAddition}
+                          />
+                        </Tooltip>
+                      </Grid>
+                    </Grid>
+                  </Box>
                   <TableContainer sx={{ maxHeight: 440 }}>
                     <Table stickyHeader aria-label="sticky table">
                       <TableHead>
@@ -168,7 +183,7 @@ const UserList = () => {
                           sx={{
                             "& th": {
                               color: "white",
-                              backgroundColor: "#47301F",
+                              backgroundColor: "#5F2E11",
                               fontSize: "1.25rem",
                               fontWeight: "bold",
                             },
@@ -355,8 +370,8 @@ const UserList = () => {
                     </Table>
                   </TableContainer>
                   <TablePagination
-                    sx={{ backgroundColor: "#E2B179" }}
-                    rowsPerPageOptions={[10, 25, 100]}
+                    sx={{ backgroundColor: "#F2F2F2" }}
+                    rowsPerPageOptions={[5, 10, 25]}
                     component="div"
                     count={data.length}
                     rowsPerPage={rowsPerPage}
@@ -382,7 +397,7 @@ const UserList = () => {
   if (update)
     finalJSX = (
       <UserForm
-        method="put"
+        method="PUT"
         userToken={userToken}
         userRole={userRole}
         data={singleValue}

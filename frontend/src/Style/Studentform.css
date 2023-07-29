@@ -1,20 +1,20 @@
 /* StudentForm.css */
 
 .studentForm {
-    margin: 8% auto;
-    width: 50vw;
-  
-  }
-  
-  .register {
-    padding: 10px;
-  }
-  
-  .Form {
-    width: 93%;
-    /* height: 93%; */
-  }
-  
-  /* Add any additional styling specific to the student form here */
-  /* ... */
-  
+  margin: 5% auto 0 auto;
+  width: 65vw;
+}
+
+.register {
+  padding: 10px;
+  color: #11425f;
+}
+
+.Form {
+  width: 93%;
+  margin-left: 4%;
+  /* height: 93%; */
+}
+
+/* Add any additional styling specific to the student form here */
+/* ... */

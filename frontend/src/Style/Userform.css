@@ -1,10 +1,11 @@
 .userFrom {
-  margin: 3% auto;
+  margin: 0 auto;
   width: 50vw;
 }
 
 .register {
   padding: 10px;
+  color: #11425f;
 }
 
 .Form {

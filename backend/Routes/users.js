@@ -2,6 +2,8 @@ const router = require("express").Router();
 const jwt = require("jsonwebtoken");
 const userData = require("../Models/user");
 const auth = require("../middleware/Auth");
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 
 // View Trainer and placement officer
 router.get("/user", auth, async (req, res) => {
@@ -52,9 +54,19 @@ router.post("/user", auth, async (req, res) => {
   try {
     if (req.body.role === "Admin") {
       console.log(req.body);
-      const newUser = userData(req.body);
-      await newUser.save();
-      res.json({ message: "User added successfully" });
+      const password = req.body.password;
+      bcrypt
+        .hash(password, saltRounds)
+        .then(function (hash) {
+          req.body.password = hash;
+
+          const newUser = userData(req.body);
+          newUser.save();
+          res.json({ message: "User added successfully" });
+        })
+        .catch((err) => {
+          console.log("Hash not generated");
+        });
     } else {
       res.json({ message: "Unauthorized access" });
     }
@@ -68,9 +80,18 @@ router.put("/user/:id", auth, async (req, res) => {
   try {
     if (req.body.role === "Admin") {
       const { id } = req.params;
-      console.log(req.body);
-      await userData.findByIdAndUpdate(id, req.body);
-      res.json({ message: "User info updated Successfully" });
+      console.log(id);
+      bcrypt
+        .hash(req.body.password, saltRounds)
+        .then(function (hash) {
+          req.body.password = hash;
+
+          userData.findByIdAndUpdate(id, { $set: req.body }).exec();
+          res.json({ message: "User info updated Successfully" });
+        })
+        .catch((err) => {
+          console.log("Hash not generated");
+        });
     } else {
       res.json({ message: "Unauthorized access" });
     }
@@ -132,26 +153,49 @@ router.post("/login", async (req, res) => {
   console.log(user);
   if (!user) res.json({ message: "User not found" });
   try {
-    if (user.password === password) {
-      jwt.sign(
-        { email: username, id: user._id, role: user.designation },
-        "ictklt",
-        { expiresIn: "1d" },
-        (err, token) => {
-          if (err) {
-            res.json({ message: "token not generated" });
-          } else {
-            res.json({
-              message: "Login Successfully",
-              token: token,
-              data: user,
-            });
+    bcrypt.compare(password, user.password).then(function (result) {
+      // result == true
+      if (result) {
+        jwt.sign(
+          { email: username, id: user._id, role: user.designation },
+          "ictklt",
+          { expiresIn: "1d" },
+          (err, token) => {
+            if (err) {
+              res.json({ message: "token not generated" });
+            } else {
+              res.json({
+                message: "Login Successfully",
+                token: token,
+                data: user,
+              });
+            }
           }
-        }
-      );
-    } else {
-      res.json({ message: "Login failed" });
-    }
+        );
+      } else {
+        res.json({ message: "Login failed" });
+      }
+    });
+    // if (user.password === password) {
+    //   jwt.sign(
+    //     { email: username, id: user._id, role: user.designation },
+    //     "ictklt",
+    //     { expiresIn: "1d" },
+    //     (err, token) => {
+    //       if (err) {
+    //         res.json({ message: "token not generated" });
+    //       } else {
+    //         res.json({
+    //           message: "Login Successfully",
+    //           token: token,
+    //           data: user,
+    //         });
+    //       }
+    //     }
+    //   );
+    // } else {
+    //   res.json({ message: "Login failed" });
+    // }
   } catch (error) {
     console.log(error);
   }

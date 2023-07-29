@@ -20,6 +20,7 @@ import {
   ThemeProvider,
   Tooltip,
   Box,
+  Typography,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import styled from "@emotion/styled";
@@ -174,12 +175,12 @@ const StudentTable = () => {
   let finalJsx = (
     <Grid
       container
+      overflow="hidden"
       justifyContent="center"
       alignItems="center"
-      style={{ height: "100vh" }}
+      sx={{ height: "95.5vh", marginTop: "30px" }}
     >
-      <Grid item xs={1} sm={1} md={1} lg={1}></Grid>
-      <Grid item xs={11} sm={11} md={11} lg={11}>
+      <Grid item xs={12} sm={12} md={12} lg={12}>
         {loading ? (
           <div style={{ margin: "10% 45%" }}>
             <CircularProgress />
@@ -215,28 +216,48 @@ const StudentTable = () => {
             )}
             {!add && (
               <>
-                <Box align="right" sx={{ marginRight: "20px" }} gutterbottom>
-                  <Tooltip title="Add" arrow>
-                    <PersonAddIcon
-                      sx={{
-                        height: "50px",
-                        width: "50px",
-                        color: "#3F708D",
-                      }}
-                      onClick={handleAddition}
-                    />
-                  </Tooltip>
-                </Box>
-                <Paper sx={{ width: "100%" }}>
-                  <h2 className="App fw-bold py-4 fst-italic">Student List</h2>
-                  <TableContainer sx={{ maxHeight: 500 }}>
+                <Paper sx={{ width: "98%", marginLeft: "1%" }}>
+                  <Box align="right" sx={{ marginRight: "20px" }}>
+                    <Grid container>
+                      <Grid item xs={11} sm={11} md={11} lg={11}>
+                        <Typography
+                          variant="h4"
+                          align="center"
+                          sx={{
+                            color: "#11425f",
+                            padding: "20px 0",
+                            fontStyle: "italic",
+                            fontFamily: "Noto Serif, serif",
+                          }}
+                        >
+                          STUDENT DETAILS
+                        </Typography>
+                      </Grid>
+                      {(userRole === "Admin" ||
+                        userRole === "Training_head") && (
+                        <Grid item xs={1} sm={1} md={1} lg={1}>
+                          <Tooltip title="Add" arrow>
+                            <PersonAddIcon
+                              sx={{
+                                height: "40px",
+                                width: "40px",
+                                color: "#3F708D",
+                              }}
+                              onClick={handleAddition}
+                            />
+                          </Tooltip>
+                        </Grid>
+                      )}
+                    </Grid>
+                  </Box>
+                  <TableContainer sx={{ maxHeight: 450 }}>
                     <Table stickyHeader aria-label="sticky table">
                       <TableHead>
                         <TableRow
                           sx={{
                             "& th": {
                               color: "white",
-                              backgroundColor: "#47301F",
+                              backgroundColor: "#5F2E11",
                               fontSize: "1.25rem",
                               fontWeight: "bold",
                             },
@@ -248,7 +269,7 @@ const StudentTable = () => {
                           <TableCell align="center" style={{ minWidth: 80 }}>
                             Course
                           </TableCell>
-                          <TableCell align="center" style={{ minWidth: 80 }}>
+                          <TableCell align="center" style={{ minWidth: 90 }}>
                             Batch
                           </TableCell>
                           <TableCell align="center" style={{ minWidth: 80 }}>
@@ -284,7 +305,7 @@ const StudentTable = () => {
                           )}
                           {(userRole === "Admin" ||
                             userRole === "Training_head") && (
-                            <TableCell align="center" style={{ minWidth: 110 }}>
+                            <TableCell align="center" style={{ minWidth: 80 }}>
                               Update/Delete
                             </TableCell>
                           )}
@@ -461,7 +482,7 @@ const StudentTable = () => {
                                       >
                                         <UpdateIcon
                                           style={{ color: "#335A71" }}
-                                        />{" "}
+                                        />
                                       </TransparentButton>
                                     </Tooltip>
                                   </ThemeProvider>
@@ -487,7 +508,7 @@ const StudentTable = () => {
                   </TableContainer>
                   <TablePagination
                     sx={{ backgroundColor: "#F2F2F2" }}
-                    rowsPerPageOptions={[10, 25, 100]}
+                    rowsPerPageOptions={[5, 10, 100]}
                     component="div"
                     count={data.length}
                     rowsPerPage={rowsPerPage}
