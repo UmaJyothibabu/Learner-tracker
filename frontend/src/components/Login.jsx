@@ -19,6 +19,26 @@ import { LoginSchema } from "../Schema/LoginSchema";
 
 const Login = () => {
   const initialValues = { username: "", password: "" };
+  const navigate = useNavigate();
+  useEffect(() => {
+    // Check if the user is already authenticated (e.g., by checking the user token in sessionStorage)
+    const isAuthenticated = !!sessionStorage.getItem("userToken");
+
+    // If the user is authenticated, replace the current history state with the dashboard page's URL
+    if (isAuthenticated) {
+      const userRole = sessionStorage.getItem("role");
+
+      // Redirect the user to the appropriate dashboard based on their role
+      if (userRole === "Admin") {
+        navigate("/userinfo");
+      } else if (
+        userRole === "Training_head" ||
+        userRole === "Placement_officer"
+      ) {
+        navigate("/studentTable");
+      }
+    }
+  }, [navigate]);
   const { values, errors, handleBlur, touched, handleChange, handleSubmit } =
     useFormik({
       initialValues: initialValues,
@@ -49,8 +69,6 @@ const Login = () => {
           });
       },
     });
-
-  const navigate = useNavigate();
 
   const theme = createTheme({
     typography: {

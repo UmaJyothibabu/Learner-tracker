@@ -28,7 +28,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import UpdateIcon from "@mui/icons-material/Update";
 import StudentForm from "./StudentForm";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import BulkUpload from "./BulkUpload"; // Import the BulkUpload component
 
 const theme = createTheme();
 const TransparentButton = styled(Button)(({ theme }) => ({

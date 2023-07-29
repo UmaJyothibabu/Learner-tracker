@@ -14,25 +14,31 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
 
 const Navbar = (props) => {
-  const [userToken, setUserToken] = useState(
-    sessionStorage.getItem("userToken")
-  );
+  // const [userToken, setUserToken] = useState(
+  //   sessionStorage.getItem("userToken")
+  // );
 
-  const [userId, setUserId] = useState(sessionStorage.getItem("userId"));
-  const [userRole, setUserRole] = useState(sessionStorage.getItem("role"));
-  const [username, setUsername] = useState(sessionStorage.getItem("username"));
-  console.log(userToken);
-  console.log(userRole);
-  console.log(username);
+  // const [userId, setUserId] = useState(sessionStorage.getItem("userId"));
+  // const [userRole, setUserRole] = useState(sessionStorage.getItem("role"));
+  // const [username, setUsername] = useState(sessionStorage.getItem("username"));
+  // console.log(userToken);
+  // console.log(userRole);
+  // console.log(username);
 
-  // const Navbar = (props) => {
-  const { window } = props;
+  const { userRole, userToken } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const navigate = useNavigate();
+
+  // cleaaring session storage on logout to prevent entering the app without out logging in
+  const logoutHandler = () => {
+    sessionStorage.clear();
+    navigate("/");
+  };
 
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
@@ -63,7 +69,7 @@ const Navbar = (props) => {
 
         {userRole === "Admin" && (
           <>
-            <ListItem key={1} disablePadding>
+            <ListItem key={2} disablePadding>
               <ListItemButton sx={{ textAlign: "center" }}>
                 <Link
                   to="/courseinfo"
@@ -73,7 +79,7 @@ const Navbar = (props) => {
                 </Link>
               </ListItemButton>
             </ListItem>
-            <ListItem key={2} disablePadding>
+            <ListItem key={3} disablePadding>
               <ListItemButton sx={{ textAlign: "center" }}>
                 <Link
                   to="/userinfo"
@@ -87,7 +93,7 @@ const Navbar = (props) => {
         )}
 
         {(userRole === "Admin" || userRole === "Training_head") && (
-          <ListItem key={2} disablePadding>
+          <ListItem key={4} disablePadding>
             <ListItemButton sx={{ textAlign: "center" }}>
               <Link
                 to="/bulkupload"
@@ -99,9 +105,9 @@ const Navbar = (props) => {
           </ListItem>
         )}
 
-        <ListItem key={2} disablePadding>
-          <ListItemButton sx={{ textAlign: "center" }}>
-            <Link to="/" style={{ color: "#2E3B55", textDecoration: "none" }}>
+        <ListItem key={5} disablePadding>
+          <ListItemButton sx={{ textAlign: "center" }} onClick={logoutHandler}>
+            <Link style={{ color: "#2E3B55", textDecoration: "none" }}>
               <ListItemText primary="Logout" />
             </Link>
           </ListItemButton>
@@ -110,8 +116,8 @@ const Navbar = (props) => {
     </Box>
   );
 
-  const container =
-    window !== undefined ? () => window().document.body : undefined;
+  // const container =
+  //   window !== undefined ? () => window().document.body : undefined;
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -146,7 +152,7 @@ const Navbar = (props) => {
           </Typography>
 
           <Box sx={{ display: { xs: "none", sm: "block" } }}>
-            <Button key={1} sx={{ color: "#fff" }}>
+            <Button key={11} sx={{ color: "#fff" }}>
               <Link
                 to="/studentTable"
                 style={{
@@ -160,7 +166,7 @@ const Navbar = (props) => {
 
             {userRole === "Admin" && (
               <>
-                <Button key={1} sx={{ color: "#fff" }}>
+                <Button key={22} sx={{ color: "#fff" }}>
                   <Link
                     to="/courseinfo"
                     style={{ color: "white", textDecoration: "none" }}
@@ -168,7 +174,7 @@ const Navbar = (props) => {
                     Course Details
                   </Link>
                 </Button>
-                <Button key={1} sx={{ color: "#fff" }}>
+                <Button key={33} sx={{ color: "#fff" }}>
                   <Link
                     to="/userinfo"
                     style={{ color: "white", textDecoration: "none" }}
@@ -180,7 +186,7 @@ const Navbar = (props) => {
             )}
 
             {(userRole === "Admin" || userRole === "Training_head") && (
-              <Button key={1} sx={{ color: "#fff" }}>
+              <Button key={44} sx={{ color: "#fff" }}>
                 <Link
                   to="/bulkupload"
                   style={{ color: "white", textDecoration: "none" }}
@@ -190,8 +196,8 @@ const Navbar = (props) => {
               </Button>
             )}
 
-            <Button key={1} sx={{ color: "#fff" }}>
-              <Link to="/" style={{ color: "white", textDecoration: "none" }}>
+            <Button key={55} sx={{ color: "#fff" }} onClick={logoutHandler}>
+              <Link style={{ color: "white", textDecoration: "none" }}>
                 Logout
               </Link>
             </Button>
@@ -200,7 +206,7 @@ const Navbar = (props) => {
       </AppBar>
       <Box component="nav">
         <Drawer
-          container={container}
+          // container={container}
           variant="temporary"
           open={mobileOpen}
           onClose={handleDrawerToggle}

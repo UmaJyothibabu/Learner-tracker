@@ -120,14 +120,14 @@ const BulkUpload = () => {
             </Button>
           )}
           <br />
-          <Button
+          {/* <Button
             variant="contained"
             onClick={() => {
               navigate("/studentTable");
             }}
           >
             Back to Student List
-          </Button>
+          </Button> */}
         </Paper>
       </Grid>
     </Grid>
