@@ -180,7 +180,12 @@ const CommonTable = (props) => {
         align="center"
         fontStyle="italic"
         gutterBottom
-        sx={{ color: "#B7527E", paddingTop: "15px" }}
+        sx={{
+          color: "#B7527E",
+          paddingTop: "15px",
+          fontFamily: "Tektur, cursive",
+          fontWeight: "500",
+        }}
       >
         {props.type}
       </Typography>
@@ -188,7 +193,14 @@ const CommonTable = (props) => {
       <TableContainer component={Paper}>
         <Table aria-label="customized table">
           <TableHead>
-            <TableRow>
+            <TableRow
+              sx={{
+                "& th": {
+                  fontSize: "1rem",
+                  fontFamily: "Tektur, cursive",
+                },
+              }}
+            >
               <StyledTableCell>NO</StyledTableCell>
               <StyledTableCell align="right">Name</StyledTableCell>
               {props.type === "Batches" && (

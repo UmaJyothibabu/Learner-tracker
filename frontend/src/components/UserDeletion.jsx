@@ -148,7 +148,7 @@ const UserDeletion = ({ user, userToken, userRole }) => {
                 sx={{ m: 2 }}
                 margin="dense"
                 type="text"
-                fullWidth
+                // fullWidth
                 required
                 name="newFaculty"
                 select

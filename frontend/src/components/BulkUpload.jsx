@@ -79,7 +79,11 @@ const BulkUpload = () => {
           <Typography
             variant="h5"
             gutterBottom
-            sx={{ color: "#11425f", fontFamily: "Noto Serif, serif" }}
+            sx={{
+              color: "#11425f",
+              fontFamily: "Tektur, cursive",
+              fontWeight: "500",
+            }}
           >
             BULK UPLOAD STUDENTS
           </Typography>

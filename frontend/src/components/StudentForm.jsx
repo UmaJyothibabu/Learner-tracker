@@ -175,7 +175,7 @@ const StudentForm = (props) => {
               gutterBottom
               className="register"
               // align="center"
-              sx={{ fontFamily: "Noto Serif, serif" }}
+              sx={{ fontFamily: "Tektur, cursive", fontWeight: "500" }}
             >
               {props.method === "post" ? "Register Student" : "Update Student"}
             </Typography>

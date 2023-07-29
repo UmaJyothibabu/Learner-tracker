@@ -149,7 +149,7 @@ const UserForm = (props) => {
                 variant="h4"
                 gutterbottom
                 className="register"
-                sx={{ fontFamily: "Noto Serif, serif" }}
+                sx={{ fontFamily: "Tektur, cursive", fontWeight: "500" }}
               >
                 {props.method === "POST" ? "Register" : "Update User"}
               </Typography>

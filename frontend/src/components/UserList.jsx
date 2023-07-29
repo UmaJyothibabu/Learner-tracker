@@ -86,7 +86,7 @@ const UserList = () => {
     setRowValue(i);
   };
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -156,7 +156,8 @@ const UserList = () => {
                             color: "#11425f",
                             fontStyle: "italic",
                             padding: "20px 0",
-                            fontFamily: "Noto Serif, serif",
+                            fontFamily: "Tektur, cursive",
+                            fontWeight: "500",
                           }}
                         >
                           FACULTY DETAILS
@@ -168,6 +169,7 @@ const UserList = () => {
                             sx={{
                               height: "40px",
                               width: "40px",
+                              fontWeight: "700",
                               color: "#3F708D",
                             }}
                             onClick={handleAddition}
@@ -185,7 +187,8 @@ const UserList = () => {
                               color: "white",
                               backgroundColor: "#5F2E11",
                               fontSize: "1.25rem",
-                              fontWeight: "bold",
+                              fontFamily: "Tektur, cursive",
+                              fontWeight: "500",
                             },
                           }}
                         >

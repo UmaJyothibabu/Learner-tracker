@@ -46,7 +46,7 @@ const StudentTable = () => {
   const [add, setAdd] = useState(false);
 
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [placementStatusMenuAnchor, setPlacementStatusMenuAnchor] =
     useState(null);
   const [selectedPlacementStatus, setSelectedPlacementStatus] = useState(null);
@@ -226,7 +226,8 @@ const StudentTable = () => {
                             color: "#11425f",
                             padding: "20px 0",
                             fontStyle: "italic",
-                            fontFamily: "Noto Serif, serif",
+                            fontFamily: "Tektur, cursive",
+                            fontWeight: "500",
                           }}
                         >
                           STUDENT DETAILS
@@ -258,7 +259,8 @@ const StudentTable = () => {
                               color: "white",
                               backgroundColor: "#5F2E11",
                               fontSize: "1.25rem",
-                              fontWeight: "bold",
+                              fontFamily: "Tektur, cursive",
+                              // fontWeight: "bold",
                             },
                           }}
                         >
