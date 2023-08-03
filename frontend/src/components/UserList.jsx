@@ -61,6 +61,11 @@ const UserList = () => {
     },
   };
 
+  const API_URL =
+    process.env.NODE_ENV === "production"
+      ? process.env.REACT_APP_API_URL_PROD
+      : process.env.REACT_APP_API_URL_DEV;
+
   // loading User info from db
   useEffect(() => {
     if (userRole !== "Admin") {
@@ -68,7 +73,7 @@ const UserList = () => {
       navigate("/");
     } else {
       axios
-        .get("http://localhost:8000/api/user", config)
+        .get(`${API_URL}/user`, config)
         .then((response) => {
           setData(response.data);
           setLoading(false);

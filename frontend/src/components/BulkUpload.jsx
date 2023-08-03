@@ -29,6 +29,11 @@ const BulkUpload = () => {
     },
   };
 
+  const API_URL =
+    process.env.NODE_ENV === "production"
+      ? process.env.REACT_APP_API_URL_PROD
+      : process.env.REACT_APP_API_URL_DEV;
+
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
@@ -47,7 +52,7 @@ const BulkUpload = () => {
     formData.append("csvFile", file); // Make sure the key matches the backend field name
 
     axios
-      .post("http://localhost:8000/api/bulk-upload", formData, config)
+      .post(`${API_URL}/bulk-upload`, formData, config)
       .then((response) => {
         setLoading(false);
         setSuccessMessage(response.data.message);

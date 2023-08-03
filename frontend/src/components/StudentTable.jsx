@@ -63,6 +63,11 @@ const StudentTable = () => {
     },
   };
 
+  const API_URL =
+    process.env.NODE_ENV === "production"
+      ? process.env.REACT_APP_API_URL_PROD
+      : process.env.REACT_APP_API_URL_DEV;
+
   useEffect(() => {
     if (
       userRole === "Admin" ||
@@ -72,7 +77,7 @@ const StudentTable = () => {
       // if admin is logged in full student in collection is fetched
       if (userRole === "Admin") {
         axios
-          .get("http://localhost:8000/api/students", config)
+          .get(`${API_URL}/students`, config)
           .then((response) => {
             setData(response.data);
             // console.log(response.data);
@@ -84,10 +89,7 @@ const StudentTable = () => {
       } else {
         // if trainer or placement officer is logged in only students assigned to them are fetched
         axios
-          .get(
-            `http://localhost:8000/api/students/${username}/${userRole}`,
-            config
-          )
+          .get(`${API_URL}/students/${username}/${userRole}`, config)
           .then((response) => {
             setData(response.data);
             // console.log(response.data);
@@ -124,7 +126,7 @@ const StudentTable = () => {
   const handlePlacementStatusSelect = (status) => {
     axios
       .put(
-        `http://localhost:8000/api/students/${selectedPlacementStatus}`,
+        `${API_URL}/students/${selectedPlacementStatus}`,
         {
           placement_status: status,
         },
@@ -149,7 +151,7 @@ const StudentTable = () => {
   // Deleting student
   const deleteHandler = (id) => {
     axios
-      .delete(`http://localhost:8000/api/students/${id}`, config)
+      .delete(`${API_URL}/students/${id}`, config)
       .then((response) => {
         if (response.data.message === "Student deleted successfully") {
           alert(response.data.message);

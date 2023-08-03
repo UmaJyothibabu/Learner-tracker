@@ -20,6 +20,11 @@ import { LoginSchema } from "../Schema/LoginSchema";
 const Login = () => {
   const initialValues = { username: "", password: "" };
   const navigate = useNavigate();
+  const API_URL =
+    process.env.NODE_ENV === "production"
+      ? process.env.REACT_APP_API_URL_PROD
+      : process.env.REACT_APP_API_URL_DEV;
+
   useEffect(() => {
     // Check if the user is already authenticated (e.g., by checking the user token in sessionStorage)
     const isAuthenticated = !!sessionStorage.getItem("userToken");
@@ -45,28 +50,26 @@ const Login = () => {
       validationSchema: LoginSchema,
       onSubmit: (values) => {
         // console.log(values);
-        axios
-          .post("http://localhost:8000/api/login", values)
-          .then((response) => {
-            if (response.data.message === "Login Successfully") {
-              const token = response.data.token;
-              const userId = response.data.data._id;
-              const role = response.data.data.designation;
-              const username = response.data.data.username;
-              sessionStorage.setItem("userToken", token);
-              sessionStorage.setItem("role", role);
-              sessionStorage.setItem("userId", userId);
-              sessionStorage.setItem("username", username);
-              alert(response.data.message);
-              if (role === "Admin") navigate("/userinfo");
-              else {
-                navigate("/studentTable");
-              }
-            } else {
-              alert("Invalid credentials");
-              window.location.reload();
+        axios.post(`${API_URL}/login`, values).then((response) => {
+          if (response.data.message === "Login Successfully") {
+            const token = response.data.token;
+            const userId = response.data.data._id;
+            const role = response.data.data.designation;
+            const username = response.data.data.username;
+            sessionStorage.setItem("userToken", token);
+            sessionStorage.setItem("role", role);
+            sessionStorage.setItem("userId", userId);
+            sessionStorage.setItem("username", username);
+            alert(response.data.message);
+            if (role === "Admin") navigate("/userinfo");
+            else {
+              navigate("/studentTable");
             }
-          });
+          } else {
+            alert("Invalid credentials");
+            window.location.reload();
+          }
+        });
       },
     });
 

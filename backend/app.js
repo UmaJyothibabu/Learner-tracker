@@ -1,10 +1,13 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const path = require("path");
 const morgan = require("morgan");
 require("dotenv").config();
-require("./connection/mongodb");
+// require("./connection/mongodb");
+const mongoose = require("mongoose");
 
+app.use(express.static(path.join(__dirname, "/build")));
 app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
@@ -26,6 +29,22 @@ app.use("/api", projectApi);
 app.use("/api", studentApi); // Mounting the student route
 app.use("/api", bulkUploadApi); // Mounting the bulk upload route
 
-app.listen(PORT, () => {
-  console.log(`Server is running at port ${PORT}`);
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.mongodb_url);
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
+  } catch (error) {
+    console.log(error);
+    process.exit(1);
+  }
+};
+
+app.get("/*", function (req, res) {
+  res.sendFile(path.join(__dirname, "/build/index.html"));
+});
+
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server is running at port ${PORT}`);
+  });
 });

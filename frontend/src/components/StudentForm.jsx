@@ -26,6 +26,11 @@ const StudentForm = (props) => {
 
   const navigate = useNavigate();
 
+  const API_URL =
+    process.env.NODE_ENV === "production"
+      ? process.env.REACT_APP_API_URL_PROD
+      : process.env.REACT_APP_API_URL_DEV;
+
   const [userToken, setUserToken] = useState(props.userToken);
 
   // const [userId, setUserId] = useState(sessionStorage.getItem("userId"));
@@ -41,24 +46,15 @@ const StudentForm = (props) => {
     if (userRole === "Admin" || userRole === "Training_head") {
       const fetchCourseAndBatchData = async () => {
         try {
-          const courseResponse = await axios.get(
-            "http://localhost:8000/api/course",
-            config
-          );
-          const batchResponse = await axios.get(
-            "http://localhost:8000/api/batch",
-            config
-          );
-          const projectResponse = await axios.get(
-            "http://localhost:8000/api/project",
-            config
-          );
+          const courseResponse = await axios.get(`${API_URL}/course`, config);
+          const batchResponse = await axios.get(`${API_URL}/batch`, config);
+          const projectResponse = await axios.get(`${API_URL}/project`, config);
           const trainerResponse = await axios.get(
-            `http://localhost:8000/api/user/Training_head`,
+            `${API_URL}/user/Training_head`,
             config
           );
           const placementOfficerResponse = await axios.get(
-            `http://localhost:8000/api/user/Placement_officer`,
+            `${API_URL}/user/Placement_officer`,
             config
           );
           // console.log(placementOfficerResponse.data);
@@ -110,7 +106,7 @@ const StudentForm = (props) => {
       try {
         if (props.method === "post") {
           const response = await axios.post(
-            "http://localhost:8000/api/students",
+            `${API_URL}/students`,
             values,
             config
           );
@@ -125,11 +121,7 @@ const StudentForm = (props) => {
         }
         if (props.method === "put") {
           axios
-            .put(
-              `http://localhost:8000/api/students/${values._id}`,
-              values,
-              config
-            )
+            .put(`${API_URL}/students/${values._id}`, values, config)
             .then((response) => {
               if (response.data.message === "Student updated successfully") {
                 alert(response.data.message);

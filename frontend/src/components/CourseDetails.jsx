@@ -22,10 +22,15 @@ const CourseDetails = () => {
     },
   };
 
+  const API_URL =
+    process.env.NODE_ENV === "production"
+      ? process.env.REACT_APP_API_URL_PROD
+      : process.env.REACT_APP_API_URL_DEV;
+
   const endPoints = [
-    "http://localhost:8000/api/course",
-    "http://localhost:8000/api/batch",
-    "http://localhost:8000/api/project",
+    `${API_URL}/course`,
+    `${API_URL}/batch`,
+    `${API_URL}/project`,
   ];
 
   //  getting batch project and course from the db collections using axios.all

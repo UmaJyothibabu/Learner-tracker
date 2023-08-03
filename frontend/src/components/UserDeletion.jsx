@@ -23,6 +23,11 @@ const UserDeletion = ({ user, userToken, userRole }) => {
   const [open, setOpen] = React.useState(true);
   const navigate = useNavigate();
 
+  const API_URL =
+    process.env.NODE_ENV === "production"
+      ? process.env.REACT_APP_API_URL_PROD
+      : process.env.REACT_APP_API_URL_DEV;
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -51,10 +56,7 @@ const UserDeletion = ({ user, userToken, userRole }) => {
         setSubstituteInfo({ ...setSubstituteInfo, assignement: user.batch });
       }
       axios
-        .get(
-          `http://localhost:8000/api/students/${user.username}/${user.designation}`,
-          config
-        )
+        .get(`${API_URL}/students/${user.username}/${user.designation}`, config)
         .then((response) => {
           if (
             response.data.message ===
@@ -65,7 +67,7 @@ const UserDeletion = ({ user, userToken, userRole }) => {
             setAssigned(true);
             // getting info of all faculties with same designation
             axios
-              .get(`http://localhost:8000/api/user/${user.designation}`, config)
+              .get(`${API_URL}/user/${user.designation}`, config)
               .then((response) => {
                 setFaculty(response.data);
               });
@@ -86,12 +88,12 @@ const UserDeletion = ({ user, userToken, userRole }) => {
   const endPoints = [
     {
       // updating student doc with new trainer or placement officer
-      url: `http://localhost:8000/api/students/${user.username}/${user.designation}`,
+      url: `${API_URL}/students/${user.username}/${user.designation}`,
       body: substitute,
     },
     {
       // updationg the course/bach assignrd to the newly assigned faculty
-      url: `http://localhost:8000/api/user/${substitute.newFaculty}/${user.designation}`,
+      url: `${API_URL}/user/${substitute.newFaculty}/${user.designation}`,
       body: substituteInfo.assignement,
     },
   ];
@@ -121,17 +123,15 @@ const UserDeletion = ({ user, userToken, userRole }) => {
 
   // deleting the faculty
   const handleDelete = () => {
-    axios
-      .delete(`http://localhost:8000/api/user/${user._id}`, config)
-      .then((response) => {
-        if (response.data.message === "User deleted successfully") {
-          alert(response.data.message);
-          window.location.reload();
-        } else {
-          alert(response.data.message);
-          window.location.reload();
-        }
-      });
+    axios.delete(`${API_URL}/user/${user._id}`, config).then((response) => {
+      if (response.data.message === "User deleted successfully") {
+        alert(response.data.message);
+        window.location.reload();
+      } else {
+        alert(response.data.message);
+        window.location.reload();
+      }
+    });
   };
 
   return (

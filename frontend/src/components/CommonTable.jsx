@@ -23,7 +23,7 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import AddCourseForm from "./AddCourseForm";
+// import AddCourseForm from "./AddCourseForm";
 import axios from "axios";
 import { ThemeProvider } from "@emotion/react";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -102,14 +102,19 @@ const CommonTable = (props) => {
     }
   };
 
+  const API_URL =
+    process.env.NODE_ENV === "production"
+      ? process.env.REACT_APP_API_URL_PROD
+      : process.env.REACT_APP_API_URL_DEV;
+
   const deleteHandler = (id) => {
     let endPoint;
     if (props.type === "Courses") {
-      endPoint = `http://localhost:8000/api/course/${id}`;
+      endPoint = `${API_URL}/course/${id}`;
     } else if (props.type === "Projects") {
-      endPoint = `http://localhost:8000/api/project/${id}`;
+      endPoint = `${API_URL}/project/${id}`;
     } else {
-      endPoint = `http://localhost:8000/api/batch/${id}`;
+      endPoint = `${API_URL}/batch/${id}`;
     }
     axios
       .delete(endPoint, props.config)
@@ -135,15 +140,15 @@ const CommonTable = (props) => {
     e.preventDefault();
     let endPoint, data;
     if (props.type === "Courses") {
-      endPoint = "http://localhost:8000/api/course";
+      endPoint = `${API_URL}/course`;
       // console.log(course);
       data = course;
     } else if (props.type === "Projects") {
-      endPoint = "http://localhost:8000/api/project";
+      endPoint = `${API_URL}/project`;
       // console.log(project);
       data = project;
     } else {
-      endPoint = "http://localhost:8000/api/batch";
+      endPoint = `${API_URL}/batch`;
       // console.log(batch);
       data = batch;
     }

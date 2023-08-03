@@ -25,6 +25,11 @@ const UserForm = (props) => {
 
   const navigate = useNavigate();
 
+  const API_URL =
+    process.env.NODE_ENV === "production"
+      ? process.env.REACT_APP_API_URL_PROD
+      : process.env.REACT_APP_API_URL_DEV;
+
   const [userToken, setUserToken] = useState(props.userToken);
 
   const [userRole, setUserRole] = useState(props.userRole);
@@ -38,10 +43,7 @@ const UserForm = (props) => {
   // if (props.method === "put") setIsDisabled(true);
   const isUsernameDisabled = props.method === "PUT";
   const isDesignationDisabled = props.method === "PUT";
-  const endPoints = [
-    "http://localhost:8000/api/course",
-    "http://localhost:8000/api/batch",
-  ];
+  const endPoints = [`${API_URL}/course`, `${API_URL}/batch`];
   // getting batch and course from the db collections using axios.all
   useEffect(() => {
     if (userRole !== "Admin") {
@@ -76,7 +78,7 @@ const UserForm = (props) => {
 
       if (props.method === "POST") {
         axios
-          .post("http://localhost:8000/api/user", values, config)
+          .post(`${API_URL}/user`, values, config)
           .then((response) => {
             if (response.data.message === "User added successfully") {
               alert(response.data.message);
@@ -100,7 +102,7 @@ const UserForm = (props) => {
       }
       if (props.method === "PUT") {
         axios
-          .put(`http://localhost:8000/api/user/${values._id}`, values, config)
+          .put(`${API_URL}/user/${values._id}`, values, config)
           .then((response) => {
             if (response.data.message === "User info updated Successfully") {
               alert(response.data.message);
