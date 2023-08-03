@@ -10,7 +10,7 @@ const Main = (props) => {
   const [username, setUsername] = useState(sessionStorage.getItem("username"));
   return (
     <>
-      <Navbar userRole={userRole} userToken={userToken} />
+      <Navbar userRole={userRole} userToken={userToken} userId={userId} />
       {props.child}
     </>
   );

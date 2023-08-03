@@ -17,7 +17,7 @@ router.get("/batch", auth, async (req, res) => {
 router.post("/batch", auth, async (req, res) => {
   try {
     if (req.body.role === "Admin") {
-      console.log(req.body);
+      // console.log(req.body);
       const newBatch = batchData(req.body);
       await newBatch.save();
       res.json({ message: "Batch added successfully" });

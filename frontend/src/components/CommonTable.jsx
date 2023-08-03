@@ -136,18 +136,18 @@ const CommonTable = (props) => {
     let endPoint, data;
     if (props.type === "Courses") {
       endPoint = "http://localhost:8000/api/course";
-      console.log(course);
+      // console.log(course);
       data = course;
     } else if (props.type === "Projects") {
       endPoint = "http://localhost:8000/api/project";
-      console.log(project);
+      // console.log(project);
       data = project;
     } else {
       endPoint = "http://localhost:8000/api/batch";
-      console.log(batch);
+      // console.log(batch);
       data = batch;
     }
-    console.log("data", data);
+    // console.log("data", data);
     axios
       .post(endPoint, data, props.config)
       .then((response) => {

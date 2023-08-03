@@ -17,7 +17,7 @@ import SkipPreviousIcon from "@mui/icons-material/SkipPrevious";
 import StudentFormSchema from "../Schema/StudentFormSchema"; // Import the form validation schema
 
 const StudentForm = (props) => {
-  console.log(props.data);
+  // console.log(props.data);
   const [courses, setCourses] = useState([]);
   const [batches, setBatches] = useState([]);
   const [projects, setProjects] = useState([]);
@@ -61,8 +61,8 @@ const StudentForm = (props) => {
             `http://localhost:8000/api/user/Placement_officer`,
             config
           );
-          console.log(placementOfficerResponse.data);
-          console.log(trainerResponse.data);
+          // console.log(placementOfficerResponse.data);
+          // console.log(trainerResponse.data);
           setPlacementOfficers(placementOfficerResponse.data);
           setTrainingHeads(trainerResponse.data);
           setCourses(courseResponse.data);
@@ -93,7 +93,10 @@ const StudentForm = (props) => {
     initialValues: {
       ...props.data,
       training_head:
-        userRole === "Training_head" ? username : props.data.training_head,
+        userRole === "Training_head"
+          ? username
+          : props.data.training_head.username,
+      placement_officer: props.data.placement_officer.username,
       student_address: props.data.student_address || {
         address: "",
         district: "",
@@ -111,7 +114,7 @@ const StudentForm = (props) => {
             values,
             config
           );
-          console.log("Form submission successful!", response.data);
+
           if (response.data.message === "Student added successfully") {
             alert(response.data.message);
             window.location.reload();
@@ -142,15 +145,18 @@ const StudentForm = (props) => {
             });
         }
       } catch (error) {
-        alert("Unable to load");
+        alert(
+          "Unable to add check the fields entered.Student may already exist"
+        );
         console.log("Error submitting form:", error);
+        navigate("/studentTable");
       }
     },
   });
 
   return (
     <Grid justifyContent="center" className="studentForm">
-      <Paper elevation={1}>
+      <Paper elevation={12}>
         {/* <Box sx={{ paddingBottom: "25px" }}> */}
         <Grid container>
           <Grid item xs={12} sm={12} md={6} lg={4}>

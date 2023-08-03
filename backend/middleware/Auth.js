@@ -11,7 +11,6 @@ const auth = (req, res, next) => {
 
       next();
     } else {
-      console.log("Inside else in auth");
       return res.json({ message: "Unauthorised user" });
     }
   });

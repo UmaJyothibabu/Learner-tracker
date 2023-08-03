@@ -17,7 +17,7 @@ router.get("/course", auth, async (req, res) => {
 router.post("/course", auth, async (req, res) => {
   try {
     if (req.body.role === "Admin") {
-      console.log(req.body);
+      // console.log(req.body);
       const newCourse = courseData(req.body);
       await newCourse.save();
       res.json({ message: "Course added successfully" });

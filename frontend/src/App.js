@@ -30,6 +30,7 @@ function App() {
       <Route path="/studentTable" element={<Main child={<StudentTable />} />} />
       <Route path="/courseinfo" element={<Main child={<CourseDetails />} />} />
       <Route path="/bulkupload" element={<Main child={<BulkUpload />} />} />
+
       {/* Add BulkUpload component route */}
       {/* You can find  Userform and StudentForm inside UserList and StudentTabled used as components */}
     </Routes>

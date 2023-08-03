@@ -1,7 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const Student = require("../Models/student");
+const User = require("../Models/user");
 const auth = require("../middleware/Auth");
+
+Student.collection
+  .createIndex({ email_id: 1 }, { unique: true })
+  .then(() => console.log("Unique index created on email_id field"))
+  .catch((err) => console.error("Error creating unique index:", err));
 // Add a new student
 router.post("/students", auth, async (req, res) => {
   try {
@@ -33,6 +39,8 @@ router.post("/students", auth, async (req, res) => {
         training_head,
         placement_officer,
       });
+
+      // check if the student already added
 
       await student.save();
 
@@ -96,7 +104,41 @@ router.put("/students/:id", auth, async (req, res) => {
 router.get("/students", auth, async (req, res) => {
   try {
     if (req.body.role === "Admin") {
-      let studentlist = await Student.find();
+      let studentlist = await Student.find().lean();
+      // Fetch usernames from the studentList
+      const trainingHeadUsernames = studentlist.map(
+        (student) => student.training_head
+      );
+      const placementOfficerUsernames = studentlist.map(
+        (student) => student.placement_officer
+      );
+
+      // Find the referenced users by their usernames
+      const trainingHeadUsers = await User.find({
+        username: { $in: trainingHeadUsernames },
+      });
+      const placementOfficerUsers = await User.find({
+        username: { $in: placementOfficerUsernames },
+      });
+
+      // Map the user documents to a username-to-user map for quick access
+      const trainingHeadMap = trainingHeadUsers.reduce((map, user) => {
+        map[user.username] = user;
+        return map;
+      }, {});
+
+      const placementOfficerMap = placementOfficerUsers.reduce((map, user) => {
+        map[user.username] = user;
+        return map;
+      }, {});
+
+      // Replace the usernames in the studentList with the actual user objects
+      studentlist.forEach((student) => {
+        student.training_head = trainingHeadMap[student.training_head];
+        student.placement_officer =
+          placementOfficerMap[student.placement_officer];
+      });
+
       res.json(studentlist);
     } else {
       res.json({ message: "Access Denied" });
@@ -117,6 +159,7 @@ router.get("/students/:faculty/:designation", auth, async (req, res) => {
       studentList = await Student.find({ training_head: faculty });
     else if (designation === "Placement_officer")
       studentList = await Student.find({ placement_officer: faculty });
+
     if (studentList.length !== 0) {
       res.json(studentList);
     } else
@@ -132,7 +175,7 @@ router.put("/students/:faculty/:designation", auth, async (req, res) => {
   try {
     if (req.body.role === "Admin") {
       const { faculty, designation } = req.params;
-      console.log(req.body);
+      // console.log(req.body);
       if (designation === "Training_head") {
         const updatedList = await Student.updateMany(
           { training_head: faculty },

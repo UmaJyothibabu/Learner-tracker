@@ -55,7 +55,9 @@ const BulkUpload = () => {
       .catch((error) => {
         setLoading(false);
         setError("Error uploading the file. Please try again.");
+
         console.log(error);
+        window.location.reload();
       });
   };
 
@@ -64,9 +66,9 @@ const BulkUpload = () => {
       container
       justifyContent="center"
       alignItems="center"
-      style={{ height: "100vh" }}
+      style={{ height: "100vh", backgroundColor: "#cecce0" }}
     >
-      <Grid item xs={12} sm={10} md={8} lg={6}>
+      <Grid item xs={12} sm={10} md={8} lg={4}>
         <Paper
           elevation={3}
           sx={{

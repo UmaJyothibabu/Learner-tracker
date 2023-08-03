@@ -50,11 +50,11 @@ const UserForm = (props) => {
     } else {
       axios.all(endPoints.map((endpoint) => axios.get(endpoint, config))).then(
         axios.spread((course, batch) => {
-          console.log("course", course);
+          // console.log("course", course);
           setCourses(course.data);
           setBatches(batch.data);
-          console.log("batch", batch);
-          console.log(props.method);
+          // console.log("batch", batch);
+          // console.log(props.method);
         })
       );
     }
@@ -72,13 +72,8 @@ const UserForm = (props) => {
     initialValues: { ...props.data, password: "" },
     validationSchema: UserFormSchema,
     onSubmit: (values) => {
-      console.log(values);
       // console.log(values);
-      // ***********************************
-      // include userid and role with values once authorization is done
-      // this code is without authorization remember to update
-      // remember to use axios headers to pass token
-      // ***********************************
+
       if (props.method === "POST") {
         axios
           .post("http://localhost:8000/api/user", values, config)
@@ -89,6 +84,12 @@ const UserForm = (props) => {
             } else if (response.data.message === "Unauthorised user") {
               alert(response.data.message);
               navigate("/");
+            } else if (
+              response.data.message ===
+              "Username already exists. Please choose a different username."
+            ) {
+              alert(response.data.message);
+              navigate("/userinfo");
             }
           })
           .catch((err) => {
@@ -98,7 +99,6 @@ const UserForm = (props) => {
           });
       }
       if (props.method === "PUT") {
-        console.log("insideput");
         axios
           .put(`http://localhost:8000/api/user/${values._id}`, values, config)
           .then((response) => {
@@ -122,8 +122,8 @@ const UserForm = (props) => {
   // user registration or updation form
   return (
     <>
-      <Grid justifyContent="center" className="userFrom" overflow="hidden">
-        <Paper elevation={1}>
+      <Grid justifyContent="center" className="userFrom">
+        <Paper elevation={12}>
           <Grid container align="center">
             <Grid item xs={12} sm={12} md={6} lg={1}>
               <Box sx={{ paddingBottom: "25px" }}>

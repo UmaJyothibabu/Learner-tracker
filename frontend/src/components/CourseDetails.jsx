@@ -33,7 +33,7 @@ const CourseDetails = () => {
   useEffect(() => {
     if (userRole !== "Admin") {
       alert("Access denied");
-      console.log(userRole);
+
       // navigate("/");
     } else {
       axios.all(endPoints.map((endpoint) => axios.get(endpoint, config))).then(
@@ -56,7 +56,13 @@ const CourseDetails = () => {
   }, []);
 
   return (
-    <>
+    <Grid
+      container
+      // overflow="hidden"
+      justifyContent="center"
+      alignItems="center"
+      sx={{ height: "100vh", backgroundColor: "#cecce0" }}
+    >
       {loading ? (
         <div style={{ margin: "10% 45%" }}>
           <CircularProgress />
@@ -114,7 +120,7 @@ const CourseDetails = () => {
           </Grid>
         </Grid>
       )}
-    </>
+    </Grid>
   );
 };
 

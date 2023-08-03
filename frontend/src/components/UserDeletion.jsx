@@ -15,7 +15,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const UserDeletion = ({ user, userToken, userRole }) => {
-  console.log(user);
+  // console.log(user);
   const [assigned, setAssigned] = useState(true);
   const [substitute, setSubstitute] = useState({});
   const [faculty, setFaculty] = useState([]);
@@ -29,6 +29,7 @@ const UserDeletion = ({ user, userToken, userRole }) => {
 
   const handleClose = () => {
     setOpen(false);
+    window.location.reload();
   };
 
   //setting axios header
@@ -141,7 +142,7 @@ const UserDeletion = ({ user, userToken, userRole }) => {
           <Grid overflow="hidden" style={{ width: "90%" }}>
             {/* If the faculty to be deleted has students assigned to him dropdown for selecting the substitute  */}
             <Typography variant="subtitle1" gutterBottom>
-              Please selete a substitute for the removing user
+              Please selete a substitute for{user.designation}-{user.name}
             </Typography>
             <form onSubmit={handleSubmit}>
               <TextField
@@ -164,6 +165,9 @@ const UserDeletion = ({ user, userToken, userRole }) => {
                 )}
               </TextField>
               <DialogActions>
+                <Button type="button" onClick={handleClose}>
+                  Cancel
+                </Button>
                 <Button type="submit">Remove</Button>
               </DialogActions>
             </form>
@@ -174,6 +178,9 @@ const UserDeletion = ({ user, userToken, userRole }) => {
               {user.name} has not assigned with any student
             </DialogContentText>
             <DialogActions>
+              <Button type="button" onClick={handleClose}>
+                Cancel
+              </Button>
               <Button type="submit" onClick={handleDelete}>
                 Remove
               </Button>

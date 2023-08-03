@@ -44,7 +44,7 @@ const Login = () => {
       initialValues: initialValues,
       validationSchema: LoginSchema,
       onSubmit: (values) => {
-        console.log(values);
+        // console.log(values);
         axios
           .post("http://localhost:8000/api/login", values)
           .then((response) => {

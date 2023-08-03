@@ -107,7 +107,11 @@ const UserList = () => {
       overflow="hidden"
       justifyContent="center"
       alignItems="center"
-      style={{ height: "95.5vh", marginTop: "30px" }}
+      style={{
+        height: "95.5vh",
+        marginTop: "30px",
+        backgroundColor: "#cecce0",
+      }}
     >
       <Grid item xs={1} sm={1} md={1} lg={1}></Grid>
       <Grid item xs={11} sm={11} md={11} lg={11}>
@@ -145,6 +149,7 @@ const UserList = () => {
                     marginLeft: "10px",
                     marginRight: "10px",
                   }}
+                  elevation={6}
                 >
                   <Box align="right" sx={{ marginRight: "20px" }}>
                     <Grid container>

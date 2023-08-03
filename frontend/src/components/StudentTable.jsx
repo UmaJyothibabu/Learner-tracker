@@ -75,7 +75,7 @@ const StudentTable = () => {
           .get("http://localhost:8000/api/students", config)
           .then((response) => {
             setData(response.data);
-            console.log(response.data);
+            // console.log(response.data);
             setLoading(false);
           })
           .catch((err) => {
@@ -90,7 +90,7 @@ const StudentTable = () => {
           )
           .then((response) => {
             setData(response.data);
-            console.log(response.data);
+            // console.log(response.data);
             setLoading(false);
           })
           .catch((err) => {
@@ -177,7 +177,7 @@ const StudentTable = () => {
       overflow="hidden"
       justifyContent="center"
       alignItems="center"
-      sx={{ height: "95.5vh", marginTop: "30px" }}
+      sx={{ height: "95.5vh", marginTop: "30px", backgroundColor: "#cecce0" }}
     >
       <Grid item xs={12} sm={12} md={12} lg={12}>
         {loading ? (
@@ -215,7 +215,7 @@ const StudentTable = () => {
             )}
             {!add && (
               <>
-                <Paper sx={{ width: "98%", marginLeft: "1%" }}>
+                <Paper elevation={6} sx={{ width: "98%", marginLeft: "1%" }}>
                   <Box align="right" sx={{ marginRight: "20px" }}>
                     <Grid container>
                       <Grid item xs={11} sm={11} md={11} lg={11}>
@@ -384,7 +384,7 @@ const StudentTable = () => {
                                   }}
                                   align="center"
                                 >
-                                  {row.training_head}
+                                  {row.training_head.name}
                                 </TableCell>
                               )}
                               {userRole === "Admin" && (
@@ -396,7 +396,7 @@ const StudentTable = () => {
                                   }}
                                   align="center"
                                 >
-                                  {row.placement_officer}
+                                  {row.placement_officer.name}
                                 </TableCell>
                               )}
                               <TableCell
@@ -527,6 +527,7 @@ const StudentTable = () => {
   );
 
   const updateStudent = (val) => {
+    // console.log(val);
     setUpdate(true);
     setSingleValue(val);
   };

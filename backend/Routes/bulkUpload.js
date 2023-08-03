@@ -32,7 +32,7 @@ router.post(
         // Insert the data into the database using insertMany
         const result = await Student.insertMany(studentsData);
 
-        console.log("Bulk upload successful!", result);
+        // console.log("Bulk upload successful!", result);
         res
           .status(200)
           .json({ message: "Bulk upload successful!", data: result });

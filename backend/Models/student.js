@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const users = require("./user");
 
 const addressSchema = mongoose.Schema({
   address: {
@@ -26,6 +27,7 @@ const studentSchema = mongoose.Schema({
   },
   email_id: {
     type: String,
+    unique: true,
     required: true,
   },
   student_address: {
@@ -57,10 +59,12 @@ const studentSchema = mongoose.Schema({
   },
   training_head: {
     type: String,
+    ref: users,
     required: true,
   },
   placement_officer: {
     type: String,
+    ref: users,
   },
 });
 

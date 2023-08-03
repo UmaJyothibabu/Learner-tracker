@@ -17,7 +17,7 @@ router.get("/project", auth, async (req, res) => {
 router.post("/project", auth, async (req, res) => {
   try {
     if (req.body.role === "Admin") {
-      console.log(req.body);
+      // console.log(req.body);
       const newProject = projectData(req.body);
       await newProject.save();
       res.json({ message: "Project added successfully" });
