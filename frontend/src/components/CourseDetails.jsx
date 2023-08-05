@@ -66,7 +66,7 @@ const CourseDetails = () => {
       // overflow="hidden"
       justifyContent="center"
       alignItems="center"
-      sx={{ height: "100vh", backgroundColor: "#cecce0" }}
+      sx={{ backgroundColor: "#cecce0", paddingBottom: "6vh" }}
     >
       {loading ? (
         <div style={{ margin: "10% 45%" }}>
@@ -80,7 +80,7 @@ const CourseDetails = () => {
           spacing={2}
           sx={{ marginTop: "5%" }}
         >
-          <Grid item xs={12} sm={12} md={12} lg={6}>
+          <Grid item xs={10} sm={10} md={10} lg={6}>
             <CommonTable
               userRole={userRole}
               userToken={userToken}
@@ -97,7 +97,7 @@ const CourseDetails = () => {
               )}
             />
           </Grid>
-          <Grid item xs={12} sm={12} md={6} lg={2}>
+          <Grid item xs={10} sm={10} md={6} lg={2}>
             <CommonTable
               userRole={userRole}
               userToken={userToken}
@@ -110,7 +110,7 @@ const CourseDetails = () => {
               }))}
             />
           </Grid>
-          <Grid item xs={12} sm={12} md={6} lg={2}>
+          <Grid item xs={10} sm={10} md={6} lg={2}>
             <CommonTable
               userRole={userRole}
               userToken={userToken}

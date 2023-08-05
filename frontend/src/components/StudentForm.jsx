@@ -147,7 +147,11 @@ const StudentForm = (props) => {
   });
 
   return (
-    <Grid justifyContent="center" className="studentForm">
+    <Grid
+      justifyContent="center"
+      className="studentForm"
+      sx={{ paddingBottom: "1vh" }}
+    >
       <Paper elevation={12}>
         {/* <Box sx={{ paddingBottom: "25px" }}> */}
         <Grid container>
@@ -180,7 +184,7 @@ const StudentForm = (props) => {
           </Grid>
         </Grid>
         {/* </Box> */}
-        <Grid>
+        <Grid container>
           <form className="Form" onSubmit={handleSubmit}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={12} md={6} lg={6}>

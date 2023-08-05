@@ -176,12 +176,16 @@ const StudentTable = () => {
   let finalJsx = (
     <Grid
       container
-      overflow="hidden"
+      // overflow="hidden"
       justifyContent="center"
       alignItems="center"
-      sx={{ height: "95.5vh", marginTop: "30px", backgroundColor: "#cecce0" }}
+      sx={{
+        paddingTop: "15vh",
+        paddingBottom: "7vh",
+        backgroundColor: "#cecce0",
+      }}
     >
-      <Grid item xs={12} sm={12} md={12} lg={12}>
+      <Grid item xs={12} sm={12} md={12} lg={userRole === "Admin" ? 12 : 10}>
         {loading ? (
           <div style={{ margin: "10% 45%" }}>
             <CircularProgress />

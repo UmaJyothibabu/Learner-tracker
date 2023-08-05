@@ -109,16 +109,15 @@ const UserList = () => {
   let finalJSX = (
     <Grid
       container
-      overflow="hidden"
+      // overflow="hidden"
       justifyContent="center"
       alignItems="center"
-      style={{
-        height: "95.5vh",
-        marginTop: "30px",
+      sx={{
+        paddingTop: "15vh",
+        paddingBottom: "8vh",
         backgroundColor: "#cecce0",
       }}
     >
-      <Grid item xs={1} sm={1} md={1} lg={1}></Grid>
       <Grid item xs={11} sm={11} md={11} lg={11}>
         {loading ? (
           <div style={{ margin: "10% 45%" }}>

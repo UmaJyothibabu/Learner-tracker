@@ -87,7 +87,7 @@ const Login = () => {
         alignItems="center"
         style={{ paddingTop: "80px" }}
       >
-        <Grid item xs={6} sm={6} md={6} lg={4}>
+        <Grid item xs={11} sm={8} md={6} lg={4}>
           <ThemeProvider theme={theme}>
             <Card sx={{ minWidth: 275, fontFamily: "Roboto Slab, serif" }}>
               <Paper elevation={24} className="paperStyle">

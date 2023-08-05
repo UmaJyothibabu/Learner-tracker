@@ -115,12 +115,14 @@ const Navbar = (props) => {
           <Grid container align="center" justifyContent="center">
             <Grid item xs={12}>
               <Typography
+                key={user.name}
                 variant="subtitle1"
                 sx={{ fontFamily: "Noto Serif, serif", color: "white" }}
               >
                 {user.name}
               </Typography>
               <Typography
+                key={user.username}
                 variant="subtitle1"
                 sx={{ fontFamily: "Noto Serif, serif", color: "white" }}
               >
@@ -128,7 +130,7 @@ const Navbar = (props) => {
               </Typography>
             </Grid>
 
-            <Grid align="center" justifyContent="center">
+            <Grid item xs={12}>
               <Typography
                 variant="subtitle2"
                 sx={{ fontFamily: "Noto Serif, serif", color: "white" }}

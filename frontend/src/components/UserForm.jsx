@@ -124,7 +124,11 @@ const UserForm = (props) => {
   // user registration or updation form
   return (
     <>
-      <Grid justifyContent="center" className="userFrom">
+      <Grid
+        justifyContent="center"
+        className="userFrom"
+        sx={{ paddingTop: "5vh", paddingBottom: "3vh" }}
+      >
         <Paper elevation={12}>
           <Grid container align="center">
             <Grid item xs={12} sm={12} md={6} lg={1}>
@@ -157,7 +161,7 @@ const UserForm = (props) => {
               </Typography>
             </Grid>
           </Grid>
-          <Grid>
+          <Grid container>
             <form className="Form" onSubmit={handleSubmit}>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={12} md={12} lg={6}>
