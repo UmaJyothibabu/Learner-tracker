@@ -150,7 +150,10 @@ const StudentForm = (props) => {
     <Grid
       justifyContent="center"
       className="studentForm"
-      sx={{ paddingBottom: "1vh" }}
+      sx={{
+        paddingBottom: "1vh",
+        paddingTop: props.method === "put" && "15vh",
+      }}
     >
       <Paper elevation={12}>
         {/* <Box sx={{ paddingBottom: "25px" }}> */}

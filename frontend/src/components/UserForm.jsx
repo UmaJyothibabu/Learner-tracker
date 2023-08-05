@@ -127,7 +127,10 @@ const UserForm = (props) => {
       <Grid
         justifyContent="center"
         className="userFrom"
-        sx={{ paddingTop: "5vh", paddingBottom: "3vh" }}
+        sx={{
+          paddingTop: props.method === "POST" ? "5vh" : "20vh",
+          paddingBottom: "3vh",
+        }}
       >
         <Paper elevation={12}>
           <Grid container align="center">
