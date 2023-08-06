@@ -79,7 +79,13 @@ const StudentTable = () => {
         axios
           .get(`${API_URL}/students`, config)
           .then((response) => {
+            if(response.data.message=== "No Students Added Yet")
+           {
+            alert(response.data.message)
+           }
+           else{
             setData(response.data);
+           }
             // console.log(response.data);
             setLoading(false);
           })
@@ -91,7 +97,14 @@ const StudentTable = () => {
         axios
           .get(`${API_URL}/students/${username}/${userRole}`, config)
           .then((response) => {
+            if (response.data.message=== "This faculty is not assigned with any student")
+            {
+              alert(response.data.message)
+              setLoading(false);
+            }
+            else{
             setData(response.data);
+            }
             // console.log(response.data);
             setLoading(false);
           })

@@ -44,6 +44,7 @@ const UserDeletion = ({ user, userToken, userRole }) => {
     },
   };
 
+  const[substituteList,setSubstituteList]=useState(true)
   // checking the faculty to be deleted has students assigned
   useEffect(() => {
     if (userRole !== "Admin") {
@@ -69,7 +70,14 @@ const UserDeletion = ({ user, userToken, userRole }) => {
             axios
               .get(`${API_URL}/user/${user.designation}`, config)
               .then((response) => {
+                if(response.data.message==="No Faculty Available")
+                {
+                  alert(response.data.message)
+                  setSubstituteList(false)
+                }
+                else{
                 setFaculty(response.data);
+                }
               });
           }
         })
@@ -157,7 +165,7 @@ const UserDeletion = ({ user, userToken, userRole }) => {
                 onChange={handleChange}
               >
                 {/* Displaying the names of faculties of same designation as the user to be deleted */}
-                {faculty.map(
+                {substituteList && faculty.map(
                   (val, i) =>
                     val.username !== user.username && (
                       <MenuItem value={val.username}>{val.name}</MenuItem>

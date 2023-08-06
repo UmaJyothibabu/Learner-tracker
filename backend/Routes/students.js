@@ -138,8 +138,13 @@ router.get("/students", auth, async (req, res) => {
         student.placement_officer =
           placementOfficerMap[student.placement_officer];
       });
-
+      if(studentlist.length!==0)
+      {
       res.json(studentlist);
+     }
+     else{
+      res.json({message : "No Students Added Yet"});
+     }
     } else {
       res.json({ message: "Access Denied" });
     }
@@ -159,7 +164,7 @@ router.get("/students/:faculty/:designation", auth, async (req, res) => {
       studentList = await Student.find({ training_head: faculty });
     else if (designation === "Placement_officer")
       studentList = await Student.find({ placement_officer: faculty });
-
+      console.log(studentList)
     if (studentList.length !== 0) {
       res.json(studentList);
     } else

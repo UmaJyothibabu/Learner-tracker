@@ -14,7 +14,12 @@ router.get("/user", auth, async (req, res) => {
   try {
     if (req.body.role === "Admin") {
       let users = await userData.find();
+      if(users.length===0){
+        res.json({message : "No Faculty added"})
+      }
+      else{
       res.json(users);
+      }
     } else {
       res.json({ message: "Unauthorized access" });
     }
@@ -32,6 +37,9 @@ router.get("/user/:designation", auth, async (req, res) => {
       let users = await userData.find({ designation: designation });
       if (users.length !== 0) {
         res.json(users);
+      }
+      else{
+        res.json({message : "No Faculty Available"});
       }
     } else {
       res.json({ message: "Unauthorized access" });
