@@ -14,7 +14,7 @@ import { useFormik } from "formik";
 import { passwordUpdateSchema } from "../Schema/PasswordUpdateSchema";
 
 const UpdatePassword = ({ userRole, userToken, userId, user }) => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [isCorrect, setIsCorrect] = useState(false);
   const [message, setMessage] = useState("");
   const [passwordUpdate, setPasswordUpdate] = useState({});
@@ -86,18 +86,18 @@ const UpdatePassword = ({ userRole, userToken, userId, user }) => {
   };
   return (
     <>
-      <Button
+      {/* <Button
         onClick={handleClickOpen}
         sx={{ color: "white", fontFamily: "Noto Serif, serif" }}
       >
         Change Password
-      </Button>
+      </Button> */}
       <Dialog
         open={open}
         onClose={handleClose}
         sx={{
           "& .MuiPaper-root": {
-            width: "20vw",
+            minWidth: "20vw",
           },
         }}
       >

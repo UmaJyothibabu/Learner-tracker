@@ -94,6 +94,15 @@ const Navbar = (props) => {
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
   };
+  const [open, setOpen] = useState(false);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handlePasswordChangeClick = () => {
+    handleClickOpen(); // Open the password change dialog
+    setProfileOpen(false); // Close the profile details if open
+  };
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
@@ -139,6 +148,21 @@ const Navbar = (props) => {
                 {user.designation}
               </Typography>
             </Grid>
+            <Button
+              onClick={handlePasswordChangeClick}
+              // onClick={handleClickOpen}
+              sx={{ color: "white", fontFamily: "Noto Serif, serif" }}
+            >
+              Change Password
+            </Button>
+            {open && (
+              <UpdatePassword
+                userRole={userRole}
+                userToken={userToken}
+                userId={userId}
+                user={user}
+              />
+            )}
             <Grid item xs={12}>
               <Divider sx={{ color: "white" }} />
             </Grid>
@@ -315,6 +339,7 @@ const Navbar = (props) => {
                 horizontal: "right",
               }}
               sx={{
+                // zIndex: 9999,
                 "& .MuiPopover-paper": {
                   width: 250, // Set the custom width here
                   backgroundColor: "#5691B3",
@@ -352,12 +377,20 @@ const Navbar = (props) => {
                 >
                   {user.designation}
                 </Typography>
-                <UpdatePassword
-                  userRole={userRole}
-                  userToken={userToken}
-                  userId={userId}
-                  user={user}
-                />
+                <Button
+                  onClick={handleClickOpen}
+                  sx={{ color: "white", fontFamily: "Noto Serif, serif" }}
+                >
+                  Change Password
+                </Button>
+                {open && (
+                  <UpdatePassword
+                    userRole={userRole}
+                    userToken={userToken}
+                    userId={userId}
+                    user={user}
+                  />
+                )}
 
                 <Button
                   onClick={logoutHandler}
