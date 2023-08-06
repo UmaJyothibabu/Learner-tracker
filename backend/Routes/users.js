@@ -158,6 +158,58 @@ router.delete("/user/:id", auth, async (req, res) => {
   }
 });
 
+// checking eneterd password is correct
+router.post("/oldpassword", auth, async (req, res) => {
+  if (
+    req.body.role === "Training_head" ||
+    req.body.role === "Placement_officer" ||
+    req.body.role === "Admin"
+  ) {
+    const { username, password, role } = req.body;
+    let user = await userData.findOne({ username: username });
+    if (!user) res.json({ message: "User not found" });
+    try {
+      bcrypt.compare(password, user.password).then(function (result) {
+        if (result) {
+          res.json({ message: "Correct Password" });
+        } else {
+          res.json({ message: "Incorrect Password" });
+        }
+      });
+    } catch (error) {
+      console.log(error.message);
+      res.json({ message: "Incorrect Password" });
+    }
+  }
+});
+
+// updating new password
+router.put("/updatepassword/:id", auth, async (req, res) => {
+  try {
+    if (
+      req.body.role === "Training_head" ||
+      req.body.role === "Placement_officer" ||
+      req.body.role === "Admin"
+    ) {
+      const { id } = req.params;
+      bcrypt
+        .hash(req.body.password, saltRounds)
+        .then(function (hash) {
+          // req.body.password = hash;
+          userData.findByIdAndUpdate(id, { $set: { password: hash } }).exec();
+          res.json({ message: "Password updated Successfully" });
+        })
+        .catch((err) => {
+          console.log("Hash not generated");
+        });
+    } else {
+      res.json({ message: "Unauthorized access" });
+    }
+  } catch (error) {
+    res.json({ message: "unable to update", err: error.message });
+  }
+});
+
 // login router
 
 router.post("/login", async (req, res) => {

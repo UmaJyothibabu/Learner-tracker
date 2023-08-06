@@ -14,6 +14,7 @@ import "../Style/Userform.css";
 import axios from "axios";
 import { useFormik } from "formik";
 import { UserFormSchema } from "../Schema/UserFormSchema";
+import { UserFormUpdateSchema } from "../Schema/UserFormUpdateSchema";
 import { useNavigate } from "react-router-dom";
 import SkipPreviousIcon from "@mui/icons-material/SkipPrevious";
 
@@ -71,8 +72,9 @@ const UserForm = (props) => {
     handleChange,
     resetForm,
   } = useFormik({
-    initialValues: { ...props.data, password: "" },
-    validationSchema: UserFormSchema,
+    initialValues: props.data,
+    validationSchema:
+      props.method === "POST" ? UserFormSchema : UserFormUpdateSchema,
     onSubmit: (values) => {
       // console.log(values);
 
@@ -336,47 +338,58 @@ const UserForm = (props) => {
                     </Box>
                   </Grid>
                 )}
-
-                <Grid item xs={12} sm={12} md={12} lg={6}>
-                  <TextField
-                    fullWidth
-                    sx={{ m: 1 }}
-                    label="Password"
-                    value={values.password}
-                    type="password"
-                    name="password"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    variant="outlined"
-                  />
-                  <Box pl={3}>
-                    {errors.password && touched.password ? (
-                      <Typography variant="body2" color="error" gutterBottom>
-                        {errors.password}
-                      </Typography>
-                    ) : null}
-                  </Box>
-                </Grid>
-                <Grid item xs={12} sm={12} md={12} lg={6}>
-                  <TextField
-                    fullWidth
-                    sx={{ m: 1 }}
-                    label="Confirm Password"
-                    type="password"
-                    value={values.confirmpassword}
-                    name="confirmpassword"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    variant="outlined"
-                  />
-                  <Box pl={3}>
-                    {errors.confirmpassword && touched.confirmpassword ? (
-                      <Typography variant="body2" color="error" gutterBottom>
-                        {errors.confirmpassword}
-                      </Typography>
-                    ) : null}
-                  </Box>
-                </Grid>
+                {props.method === "POST" && (
+                  <>
+                    <Grid item xs={12} sm={12} md={12} lg={6}>
+                      <TextField
+                        fullWidth
+                        sx={{ m: 1 }}
+                        label="Password"
+                        value={values.password}
+                        type="password"
+                        name="password"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        variant="outlined"
+                      />
+                      <Box pl={3}>
+                        {errors.password && touched.password ? (
+                          <Typography
+                            variant="body2"
+                            color="error"
+                            gutterBottom
+                          >
+                            {errors.password}
+                          </Typography>
+                        ) : null}
+                      </Box>
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={12} lg={6}>
+                      <TextField
+                        fullWidth
+                        sx={{ m: 1 }}
+                        label="Confirm Password"
+                        type="password"
+                        value={values.confirmpassword}
+                        name="confirmpassword"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        variant="outlined"
+                      />
+                      <Box pl={3}>
+                        {errors.confirmpassword && touched.confirmpassword ? (
+                          <Typography
+                            variant="body2"
+                            color="error"
+                            gutterBottom
+                          >
+                            {errors.confirmpassword}
+                          </Typography>
+                        ) : null}
+                      </Box>
+                    </Grid>
+                  </>
+                )}
 
                 <Grid item xs={12} sm={12} md={12} lg={6}>
                   {props.method === "POST" ? (

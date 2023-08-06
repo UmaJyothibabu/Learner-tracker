@@ -21,6 +21,7 @@ import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 
 import axios from "axios";
 import { Avatar, Grid, Popover, Tooltip } from "@mui/material";
+import UpdatePassword from "./UpdatePassword";
 
 const drawerWidth = 240;
 
@@ -351,6 +352,13 @@ const Navbar = (props) => {
                 >
                   {user.designation}
                 </Typography>
+                <UpdatePassword
+                  userRole={userRole}
+                  userToken={userToken}
+                  userId={userId}
+                  user={user}
+                />
+
                 <Button
                   onClick={logoutHandler}
                   endIcon={<LogoutIcon />}
