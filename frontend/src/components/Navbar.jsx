@@ -22,6 +22,7 @@ import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import axios from "axios";
 import { Avatar, Grid, Popover, Tooltip } from "@mui/material";
 import UpdatePassword from "./UpdatePassword";
+import UpdatePasswordForMob from "./UpdatePasswordForMob";
 
 const drawerWidth = 240;
 
@@ -149,20 +150,22 @@ const Navbar = (props) => {
               </Typography>
             </Grid>
             <Button
-              onClick={handlePasswordChangeClick}
-              // onClick={handleClickOpen}
+              onClick={() => {
+                navigate("/updatepwd");
+              }}
               sx={{ color: "white", fontFamily: "Noto Serif, serif" }}
             >
               Change Password
             </Button>
             {open && (
-              <UpdatePassword
+              <UpdatePasswordForMob
                 userRole={userRole}
                 userToken={userToken}
                 userId={userId}
                 user={user}
               />
             )}
+
             <Grid item xs={12}>
               <Divider sx={{ color: "white" }} />
             </Grid>

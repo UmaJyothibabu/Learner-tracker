@@ -9,6 +9,7 @@ import StudentTable from "./components/StudentTable";
 import BulkUpload from "./components/BulkUpload"; // Import the BulkUpload component
 import Main from "./components/Main";
 import { useEffect } from "react";
+import UpdatePasswordForMob from "./components/UpdatePasswordForMob";
 
 function App() {
   // Get the current location using useLocation hook
@@ -33,6 +34,10 @@ function App() {
 
       {/* Add BulkUpload component route */}
       {/* You can find  Userform and StudentForm inside UserList and StudentTabled used as components */}
+      <Route
+        path="/updatepwd"
+        element={<Main child={<UpdatePasswordForMob />} />}
+      />
     </Routes>
   );
 }

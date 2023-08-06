@@ -1,28 +1,53 @@
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogTitle,
-  Grid,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Grid, Paper, TextField, Typography } from "@mui/material";
 import axios from "axios";
-import React, { useState } from "react";
 import { useFormik } from "formik";
+import React, { useEffect, useState } from "react";
 import { passwordUpdateSchema } from "../Schema/PasswordUpdateSchema";
+import { useNavigate } from "react-router-dom";
+import "../Style/Userform.css";
 
-const UpdatePassword = ({ userRole, userToken, userId, user }) => {
-  const [open, setOpen] = useState(true);
+const UpdatePasswordForMob = () => {
+  const [userToken, setUserToken] = useState(
+    sessionStorage.getItem("userToken")
+  );
+  const [userId, setUserId] = useState(sessionStorage.getItem("userId"));
+  const [userRole, setUserRole] = useState(sessionStorage.getItem("role"));
+  const [username, setUsername] = useState(sessionStorage.getItem("username"));
   const [isCorrect, setIsCorrect] = useState(false);
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
+  const [user, setUser] = useState({});
   // const [passwordUpdate, setPasswordUpdate] = useState({});
   const [initialValues, setInitialValues] = useState({
     currentPassword: "",
     password: "",
     confirmpassword: "",
   });
+
+  useEffect(() => {
+    if (!userToken) {
+      navigate("/");
+    }
+
+    axios
+      .get(`${API_URL}/userid/${userId}`, config)
+
+      .then((response) => {
+        if (
+          response.data.message === "unable to find" ||
+          response.data.message === "Unauthorised user"
+        ) {
+          alert(response.data.message);
+          navigate("/");
+        } else {
+          // console.log("response", response.data);
+          setUser(response.data);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [userId, userToken, navigate]);
 
   const { values, errors, touched, handleSubmit, handleChange, handleBlur } =
     useFormik({
@@ -35,9 +60,10 @@ const UpdatePassword = ({ userRole, userToken, userId, user }) => {
           .then((response) => {
             if (response.data.message === "Password updated Successfully") {
               alert(response.data.message);
-              window.location.reload();
+              navigate("/studentTable");
             } else {
               alert(response.data.message);
+              navigate("/studentTable");
             }
           })
           .catch((err) => {
@@ -76,33 +102,41 @@ const UpdatePassword = ({ userRole, userToken, userId, user }) => {
       });
   };
 
-  const handleClickOpen = () => {
-    setOpen(true);
+  const handleCancel = () => {
+    navigate("/studentTable");
   };
 
-  const handleClose = () => {
-    setOpen(false);
-    window.location.reload();
-  };
   return (
-    <>
-      {/* <Button
-        onClick={handleClickOpen}
-        sx={{ color: "white", fontFamily: "Noto Serif, serif" }}
-      >
-        Change Password
-      </Button> */}
-      <Dialog
-        open={open}
-        onClose={handleClose}
+    <Grid
+      justifyContent="center"
+      align="center"
+      //   className="userFrom"
+      sx={{
+        paddingTop: "20vh",
+        paddingBottom: "3vh",
+        width: "70vw",
+        margin: " 0 auto",
+      }}
+    >
+      <Paper
+        elevation={12}
         sx={{
-          "& .MuiPaper-root": {
-            minWidth: "20vw",
-          },
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column", // To stack the items vertically
+          padding: "20px",
         }}
       >
-        <DialogTitle align="center">Change Password</DialogTitle>
-        <Grid overflow="hidden" justifyContent="center" align="center">
+        <Grid container>
+          <Typography
+            variant="h6"
+            gutterBottom
+            align="center"
+            sx={{ color: "#3F708D" }}
+          >
+            Change Password
+          </Typography>
           <form onSubmit={handleSubmit}>
             <Grid>
               <TextField
@@ -187,17 +221,39 @@ const UpdatePassword = ({ userRole, userToken, userId, user }) => {
                 </Grid>
               </>
             )}
-            <DialogActions>
-              <Button type="button" onClick={handleClose}>
-                Cancel
-              </Button>
-              <Button type="submit">Update password</Button>
-            </DialogActions>
+
+            <Button
+              type="button"
+              variant="contained"
+              onClick={handleCancel}
+              sx={{
+                padding: "4%",
+                marginLeft: "2%",
+                marginBottom: "6%",
+                backgroundColor: "#3F708D",
+              }}
+              gutterBottom
+            >
+              Cancel
+            </Button>
+
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{
+                padding: "4%",
+                marginLeft: "2%",
+                marginBottom: "6%",
+                backgroundColor: "#3F708D",
+              }}
+            >
+              Update password
+            </Button>
           </form>
         </Grid>
-      </Dialog>
-    </>
+      </Paper>
+    </Grid>
   );
 };
 
-export default UpdatePassword;
+export default UpdatePasswordForMob;
