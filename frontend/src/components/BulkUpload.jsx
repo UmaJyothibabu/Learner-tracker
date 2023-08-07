@@ -54,15 +54,27 @@ const BulkUpload = () => {
     axios
       .post(`${API_URL}/bulk-upload`, formData, config)
       .then((response) => {
+        console.log(response.data);
+
         setLoading(false);
         setSuccessMessage(response.data.message);
       })
       .catch((error) => {
-        setLoading(false);
-        setError("Error uploading the file. Please try again.");
+        if (error.response && error.response.status === 400) {
+          // Handle the error response with status code 400
+          console.log("Error uploading the file:", error.response.data.error);
+          setError(error.response.data.error); // Set the error message from the backend
 
-        console.log(error);
-        window.location.reload();
+          // alert(error.response.data.error);
+          // navigate("/studentTable");
+          setLoading(false);
+        } else {
+          // Handle other types of errors
+          setLoading(false);
+          setError("Error uploading the file. Please try again.");
+          console.log(error);
+          window.location.reload();
+        }
       });
   };
 

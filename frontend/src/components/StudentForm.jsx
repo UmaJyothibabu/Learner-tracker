@@ -353,6 +353,7 @@ const StudentForm = (props) => {
                   variant="outlined"
                   onChange={handleChange}
                   onBlur={handleBlur}
+                  disabled={userRole === "Training_head"}
                 >
                   <MenuItem value="Placed">Placed</MenuItem>
                   <MenuItem value="Job Seeking">Job Seeking</MenuItem>

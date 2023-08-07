@@ -4,6 +4,7 @@ const multer = require("multer");
 const csvtojson = require("csvtojson");
 const Student = require("../Models/student");
 const auth = require("../middleware/Auth");
+const userData = require("../Models/user");
 
 // Configure multer to handle file uploads
 const upload = multer();
@@ -22,12 +23,38 @@ router.post(
             .status(400)
             .json({ error: "CSV file not found in the request" });
         }
+        // Get facutly username from collection
+        const faculties = await userData.find({}, "username");
+        const facultyUsernames = faculties.map((faculty) => faculty.username);
 
         // Get the uploaded CSV file buffer
         const csvFileBuffer = req.file.buffer.toString();
 
         // Parse the CSV file and extract data using csvtojson
         const studentsData = await csvtojson().fromString(csvFileBuffer);
+
+        // Check if the faculty_username already exists in faculties
+        const facultyUsernamesInCSV = studentsData.reduce(
+          (usernames, student) => {
+            return usernames.concat([
+              student.training_head,
+              student.placement_officer,
+            ]);
+          },
+          []
+        );
+
+        const nonExixtingUsernames = facultyUsernamesInCSV.filter(
+          (username) => !facultyUsernames.includes(username)
+        );
+        console.log(nonExixtingUsernames.length);
+        if (nonExixtingUsernames.length > 0) {
+          return res.status(400).json({
+            error:
+              "The following faculty usernames are not valid: " +
+              nonExixtingUsernames.join(", "),
+          });
+        }
 
         // Insert the data into the database using insertMany
         const result = await Student.insertMany(studentsData);

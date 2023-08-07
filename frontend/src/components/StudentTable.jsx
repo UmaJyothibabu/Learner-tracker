@@ -79,13 +79,12 @@ const StudentTable = () => {
         axios
           .get(`${API_URL}/students`, config)
           .then((response) => {
-            if(response.data.message=== "No Students Added Yet")
-           {
-            alert(response.data.message)
-           }
-           else{
-            setData(response.data);
-           }
+            if (response.data.message === "No Students Added Yet") {
+              alert(response.data.message);
+            } else {
+              console.log(response.data);
+              setData(response.data);
+            }
             // console.log(response.data);
             setLoading(false);
           })
@@ -97,13 +96,15 @@ const StudentTable = () => {
         axios
           .get(`${API_URL}/students/${username}/${userRole}`, config)
           .then((response) => {
-            if (response.data.message=== "This faculty is not assigned with any student")
-            {
-              alert(response.data.message)
+            if (
+              response.data.message ===
+              "This faculty is not assigned with any student"
+            ) {
+              alert(response.data.message);
               setLoading(false);
-            }
-            else{
-            setData(response.data);
+            } else {
+              console.log(response.data);
+              setData(response.data);
             }
             // console.log(response.data);
             setLoading(false);
@@ -394,7 +395,7 @@ const StudentTable = () => {
                               >
                                 {row.course_status}
                               </TableCell>
-                              {userRole === "Admin" && (
+                              {userRole === "Admin" && row.training_head && (
                                 <TableCell
                                   sx={{
                                     fontSize: "1.05rem",
@@ -406,18 +407,19 @@ const StudentTable = () => {
                                   {row.training_head.name}
                                 </TableCell>
                               )}
-                              {userRole === "Admin" && (
-                                <TableCell
-                                  sx={{
-                                    fontSize: "1.05rem",
-                                    fontWeight: "bold",
-                                    color: "#47301F",
-                                  }}
-                                  align="center"
-                                >
-                                  {row.placement_officer.name}
-                                </TableCell>
-                              )}
+                              {userRole === "Admin" &&
+                                row.placement_officer && (
+                                  <TableCell
+                                    sx={{
+                                      fontSize: "1.05rem",
+                                      fontWeight: "bold",
+                                      color: "#47301F",
+                                    }}
+                                    align="center"
+                                  >
+                                    {row.placement_officer.name}
+                                  </TableCell>
+                                )}
                               <TableCell
                                 sx={{
                                   fontSize: "1.05rem",

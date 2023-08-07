@@ -14,11 +14,10 @@ router.get("/user", auth, async (req, res) => {
   try {
     if (req.body.role === "Admin") {
       let users = await userData.find();
-      if(users.length===0){
-        res.json({message : "No Faculty added"})
-      }
-      else{
-      res.json(users);
+      if (users.length === 0) {
+        res.json({ message: "No Faculty added" });
+      } else {
+        res.json(users);
       }
     } else {
       res.json({ message: "Unauthorized access" });
@@ -37,9 +36,8 @@ router.get("/user/:designation", auth, async (req, res) => {
       let users = await userData.find({ designation: designation });
       if (users.length !== 0) {
         res.json(users);
-      }
-      else{
-        res.json({message : "No Faculty Available"});
+      } else {
+        res.json({ message: "No Faculty Available" });
       }
     } else {
       res.json({ message: "Unauthorized access" });
@@ -104,17 +102,17 @@ router.put("/user/:id", auth, async (req, res) => {
     if (req.body.role === "Admin") {
       const { id } = req.params;
 
-      bcrypt
-        .hash(req.body.password, saltRounds)
-        .then(function (hash) {
-          req.body.password = hash;
+      // bcrypt
+      //   .hash(req.body.password, saltRounds)
+      //   .then(function (hash) {
+      //     req.body.password = hash;
 
-          userData.findByIdAndUpdate(id, { $set: req.body }).exec();
-          res.json({ message: "User info updated Successfully" });
-        })
-        .catch((err) => {
-          console.log("Hash not generated");
-        });
+      await userData.findByIdAndUpdate(id, { $set: req.body }).exec();
+      res.json({ message: "User info updated Successfully" });
+      // })
+      // .catch((err) => {
+      //   console.log("Hash not generated");
+      // });
     } else {
       res.json({ message: "Unauthorized access" });
     }
