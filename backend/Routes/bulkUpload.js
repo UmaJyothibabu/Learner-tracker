@@ -23,7 +23,7 @@ router.post(
             .status(400)
             .json({ error: "CSV file not found in the request" });
         }
-        
+
         // Get the uploaded CSV file buffer
         const csvFileBuffer = req.file.buffer.toString();
 
@@ -63,7 +63,9 @@ router.post(
         // Insert the data into the database using insertMany
         const result = await Student.insertMany(studentsData);
 
-        res.status(200).json({ message: "Bulk upload successful!", data: result });
+        res
+          .status(200)
+          .json({ message: "Bulk upload successful!", data: result });
       } else {
         res.status(403).json({ error: "Access Denied" });
       }
