@@ -21,11 +21,9 @@ const BulkUpload = () => {
     sessionStorage.getItem("userToken")
   );
 
-  const [userRole, setUserRole] = useState(sessionStorage.getItem("role"));
-  const [username, setUsername] = useState(sessionStorage.getItem("username"));
   const config = {
     headers: {
-      authorization: " Bearer " + userToken,
+      authorization: "Bearer " + userToken,
     },
   };
 
@@ -49,7 +47,13 @@ const BulkUpload = () => {
     setLoading(true);
 
     const formData = new FormData();
-    formData.append("csvFile", file); // Make sure the key matches the backend field name
+    formData.append("csvFile", file);
+
+    if (file.size === 0) {
+      setError("The uploaded file is empty.");
+      setLoading(false);
+      return;
+    }
 
     axios
       .post(`${API_URL}/bulk-upload`, formData, config)
@@ -61,15 +65,10 @@ const BulkUpload = () => {
       })
       .catch((error) => {
         if (error.response && error.response.status === 400) {
-          // Handle the error response with status code 400
           console.log("Error uploading the file:", error.response.data.error);
-          setError(error.response.data.error); // Set the error message from the backend
-
-          // alert(error.response.data.error);
-          // navigate("/studentTable");
+          setError(error.response.data.error);
           setLoading(false);
         } else {
-          // Handle other types of errors
           setLoading(false);
           setError("Error uploading the file. Please try again.");
           console.log(error);
