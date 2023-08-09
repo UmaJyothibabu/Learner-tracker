@@ -101,13 +101,13 @@ router.put("/user/:id", auth, async (req, res) => {
   try {
     if (req.body.role === "Admin") {
       const { id } = req.params;
-
+      // req.body.password = "";
       // bcrypt
       //   .hash(req.body.password, saltRounds)
       //   .then(function (hash) {
       //     req.body.password = hash;
 
-      await userData.findByIdAndUpdate(id, { $set: req.body }).exec();
+      userData.findByIdAndUpdate(id, { $set: req.body }).exec();
       res.json({ message: "User info updated Successfully" });
       // })
       // .catch((err) => {

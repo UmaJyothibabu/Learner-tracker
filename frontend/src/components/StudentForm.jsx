@@ -92,7 +92,10 @@ const StudentForm = (props) => {
         userRole === "Training_head"
           ? username
           : props.data.training_head.username,
-      placement_officer: props.data.placement_officer.username,
+      placement_officer:
+        userRole === "Admin"
+          ? props.data.placement_officer.username
+          : props.data.placement_officer,
       student_address: props.data.student_address || {
         address: "",
         district: "",
@@ -407,12 +410,14 @@ const StudentForm = (props) => {
                     const batches = pofficer.batch.filter(
                       (val) => val === values.batch
                     );
-                    if (batches.length !== 0)
+                    if (batches.length !== 0) {
                       return (
                         <MenuItem key={pofficer.name} value={pofficer.username}>
                           {pofficer.name}
                         </MenuItem>
                       );
+                    }
+                    return null;
                   })}
                 </TextField>
                 <Box pl={3}>

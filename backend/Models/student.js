@@ -55,7 +55,7 @@ const studentSchema = mongoose.Schema({
   },
   placement_status: {
     type: String,
-    required: true,
+    // required: true,
   },
   training_head: {
     type: String,

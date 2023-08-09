@@ -112,8 +112,15 @@ const Navbar = (props) => {
           to="/studentTable"
           style={{ color: "white", textDecoration: "none" }}
         >
-          ICTK Learner Tracker
+          ICTAK Learner Tracker
         </Link>
+      </Typography>
+      <Typography variant="subtitle1" sx={{ my: 2, color: "white" }}>
+        {userRole === "Admin"
+          ? "Admin"
+          : userRole === "Training_head"
+          ? "Training Head"
+          : "Placement officer"}
       </Typography>
       <Divider />
       <br />
@@ -264,7 +271,12 @@ const Navbar = (props) => {
                 fontFamily: "Noto Serif, serif",
               }}
             >
-              ICTK Learner Tracker
+              ICTAK Learner Tracker -
+              {userRole === "Admin"
+                ? " Admin"
+                : userRole === "Training_head"
+                ? " Training Head"
+                : " Placement officer"}
             </Link>
           </Typography>
 
