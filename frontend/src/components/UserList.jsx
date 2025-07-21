@@ -75,11 +75,10 @@ const UserList = () => {
       axios
         .get(`${API_URL}/user`, config)
         .then((response) => {
-          if(response.data.message==="No Faculty added"){
-            alert(response.data.message)
-          }
-          else{
-          setData(response.data);
+          if (response.data.message === "No Faculty added") {
+            alert(response.data.message);
+          } else {
+            setData(response.data);
           }
           setLoading(false);
         })
