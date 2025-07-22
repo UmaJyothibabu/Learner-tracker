@@ -12,7 +12,7 @@ app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-const PORT = process.env.PORT;
+const PORT = process.env.PORT||5000;
 
 // Requiring all routes
 const userApi = require("./Routes/users");
